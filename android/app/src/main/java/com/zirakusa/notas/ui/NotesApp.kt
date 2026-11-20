@@ -12,7 +12,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import com.zirakusa.notas.R
 import com.zirakusa.notas.data.NotesRules
@@ -28,13 +27,14 @@ import kotlinx.coroutines.launch
  * Drawer + list, or the editor, and the folder dialogs. [askUnlock] runs the phone's lock and calls its
  * argument when it says yes (opening «Bloqueado»).
  */
-@Composable fun NotesApp(state: NotesState, tasks: TasksState, askUnlock: (() -> Unit) -> Unit = {}, now: () -> Long = System::currentTimeMillis) {
+@Composable fun NotesApp(
+    state: NotesState, tasks: TasksState, askUnlock: (() -> Unit) -> Unit = {}, now: () -> Long = System::currentTimeMillis,
+    platform: @Composable (Editing) -> EditorPlatform = { remember { object : EditorPlatform {} } },
+    allowNotifications: () -> Unit = {},
+) {
     val e = state.editing
     if (e != null) {
-        val left = NotesRules.daysLeft(e.note, now()).toInt()
-        val info = if (e.readOnly) pluralStringResource(R.plurals.days_left, left, left)
-        else pluralStringResource(R.plurals.characters, e.draft.body.length, e.draft.body.length)
-        EditorScreen(e, state.folders, info, state::closeEditor, state::moveOpen, state::trashOpen, { state.restore(e.note) }, { state.deleteForever(e.note) })
+        EditorScreen(state, e, platform(e), now())
         return
     }
     val drawer = rememberDrawerState(DrawerValue.Closed)
@@ -54,7 +54,7 @@ import kotlinx.coroutines.launch
         },
         drawerState = drawer,
     ) {
-        NotesScreen(state, tasks, state.sectionTitle { fixed.getValue(it) }, { NotesRules.shortDate(it.updatedAt, now()) }) { scope.launch { drawer.open() } }
+        NotesScreen(state, tasks, state.sectionTitle { fixed.getValue(it) }, { NotesRules.shortDate(it.updatedAt, now()) }, allowNotifications) { scope.launch { drawer.open() } }
     }
     if (naming) NameDialog(onDone = { naming = false; if (it != null) { state.addFolder(it); scope.launch { drawer.close() } } })
     deleting?.let { id ->

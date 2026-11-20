@@ -3,6 +3,7 @@ package com.zirakusa.notas.ui
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.zirakusa.notas.data.Attachment
 import com.zirakusa.notas.data.Folder
 import com.zirakusa.notas.data.Layout
 import com.zirakusa.notas.data.Note
@@ -12,19 +13,18 @@ import com.zirakusa.notas.data.Section
 
 enum class Tab { NOTES, TASKS }
 
-/** The note open in the editor; [history] holds its title and text. */
-class Editing(val note: Note, val history: UndoHistory) {
-    var draft by mutableStateOf(history.current)
-        private set
-    val readOnly get() = note.deletedAt != null
-
-    fun change(next: Draft) { if (!readOnly) { history.record(next); draft = history.current } }
-    fun undo() { draft = history.undo() }
-    fun redo() { draft = history.redo() }
+/** Single owner of what the app shows. Screens only paint it and call these functions. */
+/** What the phone does with reminders (AlarmManager in the app, nothing in tests). */
+interface ReminderScheduler {
+    fun set(kind: String, id: Long, at: Long, text: String) = Unit
+    fun cancel(kind: String, id: Long) = Unit
 }
 
-/** Single owner of what the app shows. Screens only paint it and call these functions. */
-class NotesState(private val store: NoteStore, private val clock: () -> Long = System::currentTimeMillis) {
+class NotesState(
+    private val store: NoteStore,
+    private val clock: () -> Long = System::currentTimeMillis,
+    private val reminders: ReminderScheduler = object : ReminderScheduler {},
+) {
     var notes by mutableStateOf(emptyList<Note>()); private set
     var folders by mutableStateOf(emptyList<Folder>()); private set
     var section by mutableStateOf<Section>(Section.Uncategorized); private set
@@ -75,7 +75,7 @@ class NotesState(private val store: NoteStore, private val clock: () -> Long = S
     /** Sends the chosen notes to «Bloqueado», or takes them out when looking at «Bloqueado». */
     fun lockSelected() { val lock = section != Section.Locked; changeSelected { it.copy(locked = lock) } }
     fun moveSelected(folderId: Long?) = changeSelected { it.copy(folderId = folderId, locked = false) }
-    fun trashSelected() { val now = clock(); changeSelected { it.copy(deletedAt = now) } }
+    fun trashSelected() { val now = clock(); chosen().forEach { reminders.cancel(NOTE, it.id) }; changeSelected { it.copy(deletedAt = now, remindAt = null) } }
     fun restoreSelected() = changeSelected { it.copy(deletedAt = null) }
     fun deleteSelectedForever() { store.deleteForever(selected); selected = emptySet(); reload() }
 
@@ -93,25 +93,36 @@ class NotesState(private val store: NoteStore, private val clock: () -> Long = S
         open(Note(folderId = folder, locked = section == Section.Locked))
     }
 
-    fun open(note: Note) { editing = Editing(note, UndoHistory(Draft(note.title, note.body))) }
+    fun open(note: Note) {
+        editing = Editing(note, UndoHistory(Draft(note.title, note.body)), if (note.id == 0L) emptyList() else store.attachments(note.id))
+    }
+
+    /** Opens the note with [id] (a home-screen shortcut or a reminder). False when it does not exist or is locked. */
+    fun openById(id: Long): Boolean {
+        val note = notes.firstOrNull { it.id == id && it.deletedAt == null } ?: return false
+        if (note.locked && !unlocked) return false
+        open(note); return true
+    }
 
     /** Leaves the editor: keeps the note if it changed, and drops a new one left empty. */
     fun closeEditor() {
         val e = editing ?: return
         editing = null
         if (e.readOnly) return
-        if (NotesRules.isEmpty(e.draft.title, e.draft.body)) {
-            if (e.note.id != 0L) store.deleteForever(listOf(e.note.id))
+        if (isEmpty(e)) {
+            if (e.note.id != 0L) { reminders.cancel(NOTE, e.note.id); store.deleteForever(listOf(e.note.id)) }
             reload()
         } else persist(e)
     }
 
-    /** Keeps what is written without leaving the editor (the app goes to the background). */
+    /** Keeps what is written without leaving the editor (✓, or the app goes to the background). */
     fun saveOpen() {
         val e = editing ?: return
-        if (e.readOnly || NotesRules.isEmpty(e.draft.title, e.draft.body)) return
-        editing = Editing(persist(e), e.history)
+        if (e.readOnly || isEmpty(e)) return
+        e.note = persist(e)
     }
+
+    private fun isEmpty(e: Editing) = NotesRules.isEmpty(e.draft.title, e.draft.body) && e.attachments.isEmpty()
 
     private fun persist(e: Editing): Note {
         val (title, body) = e.draft
@@ -123,12 +134,49 @@ class NotesState(private val store: NoteStore, private val clock: () -> Long = S
         return saved
     }
 
+    /** Changes the open note's settings (pin, lock, background, reminder, folder) and keeps them at once. */
+    fun changeOpen(change: (Note) -> Note) {
+        val e = editing ?: return
+        if (e.readOnly) return
+        val next = change(e.note)
+        e.note = if (next.id != 0L) { store.save(next); reload(); next } else next
+        if (next.remindAt != null && next.id != 0L) reminders.set(NOTE, next.id, next.remindAt, NotesRules.displayTitle(next.copy(title = e.draft.title, body = e.draft.body)))
+        else if (next.id != 0L) reminders.cancel(NOTE, next.id)
+    }
+
+    /** «Recordatorio»: [at] null removes it. A new note is saved first so the reminder can open it. */
+    fun remindOpen(at: Long?) {
+        val e = editing ?: return
+        if (e.note.id == 0L) e.note = persist(e)
+        changeOpen { it.copy(remindAt = at) }
+    }
+
+    /** Keeps a photo or drawing (already in [NoteStore.attachmentDir]) with the open note, saving a new note first. */
+    fun attach(kind: Attachment.Kind, file: String) {
+        val e = editing ?: return
+        if (e.readOnly) return
+        if (e.note.id == 0L) e.note = persist(e)
+        store.addAttachment(Attachment(noteId = e.note.id, kind = kind, file = file, createdAt = clock()))
+        e.attachments = store.attachments(e.note.id)
+    }
+
+    fun detach(a: Attachment) {
+        val e = editing ?: return
+        store.deleteAttachment(a.id)
+        e.attachments = store.attachments(e.note.id)
+    }
+
+    val attachmentDir get() = store.attachmentDir
+
     /** Sends the open note to «Recientemente eliminados» (kept 30 days). */
     fun trashOpen() {
         val e = editing ?: return
         editing = null
         val (title, body) = e.draft
-        if (e.note.id != 0L) store.save(e.note.copy(title = title, body = body, updatedAt = clock(), deletedAt = clock()))
+        if (e.note.id != 0L) {
+            reminders.cancel(NOTE, e.note.id)
+            store.save(e.note.copy(title = title, body = body, updatedAt = clock(), deletedAt = clock(), remindAt = null))
+        }
         reload()
     }
 
@@ -139,12 +187,10 @@ class NotesState(private val store: NoteStore, private val clock: () -> Long = S
     fun emptyTrash() { store.deleteForever(notes.filter { it.deletedAt != null }.map { it.id }); reload() }
 
     /** Moves the open note to [folderId] (null = «Sin categoría»). */
-    fun moveOpen(folderId: Long?) {
-        val e = editing ?: return
-        val moved = e.note.copy(folderId = folderId)
-        editing = Editing(moved, e.history)
-        if (e.note.id != 0L) { store.save(moved); reload() }
-    }
+    fun moveOpen(folderId: Long?) = changeOpen { it.copy(folderId = folderId, locked = false) }
+
+    /** Reminders still to come, to set again after the phone restarts. */
+    fun upcomingReminders(): List<Note> = store.notes().filter { it.deletedAt == null && (it.remindAt ?: 0) > clock() }
 
     fun addFolder(name: String) {
         val clean = name.trim().take(60)
@@ -162,5 +208,8 @@ class NotesState(private val store: NoteStore, private val clock: () -> Long = S
 
     private fun reload() { notes = store.notes(); folders = store.folders() }
 
-    private companion object { const val LAYOUT = "layout" }
+    companion object {
+        private const val LAYOUT = "layout"
+        const val NOTE = "note"
+    }
 }

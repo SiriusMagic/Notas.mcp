@@ -61,4 +61,39 @@ class ScreenshotsTest {
         compose.onNodeWithText("151 metros\n30 metros de blanco").assertExists()
         onView(isRoot()).captureRoboImage("build/screenshots/notas-editor.png")
     }
+
+    @Test fun editorPanels() {
+        val store = SqlNoteStore(ApplicationProvider.getApplicationContext())
+        store.save(Note(title = "Hh", body = "## Materiales\nCajetines\nSpray **negro**\n☐ Cinta aislante\n☑ Cable 12\n• Cable 8\n|  Caja  |  breakers  |",
+            createdAt = 1_763_500_000_000, updatedAt = 1_763_508_000_000))
+        val state = NotesState(store)
+        compose.setContent { NotesTheme { NotesApp(state, TasksState(store)) } }
+        compose.onNodeWithText("Hh").performClick()
+        compose.onNodeWithContentDescription("Compartir").assertExists()
+        onView(isRoot()).captureRoboImage("build/screenshots/notas-note-reading.png")
+        compose.onNodeWithContentDescription("Más opciones").performClick()
+        compose.onNodeWithText("Agregar a pantalla principal").assertExists()
+        onView(isRoot()).captureRoboImage("build/screenshots/notas-note-menu.png")
+        compose.onNodeWithText("Fondo").performClick()
+        compose.onNodeWithContentDescription("Sin fondo").assertExists()
+        state.changeOpen { it.copy(color = 5) }
+        compose.waitForIdle()
+        onView(isRoot()).captureRoboImage("build/screenshots/notas-note-background.png")
+        compose.onNodeWithContentDescription("Cerrar").performClick()
+        state.editing!!.writing = true
+        compose.onNodeWithContentDescription("Dictar").assertExists()
+        onView(isRoot()).captureRoboImage("build/screenshots/notas-note-writing.png")
+        compose.onNodeWithContentDescription("Formato").performClick()
+        compose.onNodeWithText("H1").assertExists()
+        onView(isRoot()).captureRoboImage("build/screenshots/notas-note-format.png")
+        compose.onNodeWithText("H2").performClick()
+        compose.onNodeWithContentDescription("Cerrar").performClick()
+        compose.onNodeWithContentDescription("Cámara").performClick()
+        compose.onNodeWithText("Reconocimiento de texto").assertExists()
+        onView(isRoot()).captureRoboImage("build/screenshots/notas-note-camera.png")
+        compose.onNodeWithContentDescription("Cerrar").performClick()
+        compose.onNodeWithContentDescription("Dibujo").performClick()
+        compose.onNodeWithContentDescription("Marcador").assertExists()
+        onView(isRoot()).captureRoboImage("build/screenshots/notas-note-drawing.png")
+    }
 }

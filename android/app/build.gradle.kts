@@ -12,8 +12,10 @@ android {
         applicationId = "com.zirakusa.notas"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "0.2.0"
+        // ML Kit's on-device text recognition is native code: only 64-bit ARM phones (all recent ones), like Luma.
+        ndk { abiFilters += "arm64-v8a" }
     }
     buildFeatures { compose = true }
     buildTypes {
@@ -29,6 +31,8 @@ android {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
+    // Phone app built for 64-bit ARM only (see abiFilters), like Luma.
+    lint { disable += "ChromeOsAbiSupport" }
     testOptions {
         unitTests.isIncludeAndroidResources = true
         // Screenshots of the screens land in app/build/screenshots .
@@ -48,6 +52,13 @@ dependencies {
     implementation("androidx.biometric:biometric:1.1.0")
     // Same coroutines as Stone, Luma and Calculadora (the drawer opens with them).
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
+    // Photos in the notes (same image library as Luma).
+    implementation("io.coil-kt:coil-compose:2.7.0")
+    // «Reconocimiento de texto»: ML Kit inside the phone, the same as Luma.
+    implementation("com.google.mlkit:text-recognition:16.0.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.11.0")
+    // Turns camera photos upright (EXIF), also on older phones.
+    implementation("androidx.exifinterface:exifinterface:1.4.2")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.robolectric:robolectric:4.18")
     testImplementation("androidx.compose.ui:ui-test-junit4")

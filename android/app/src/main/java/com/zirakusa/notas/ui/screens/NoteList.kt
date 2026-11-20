@@ -35,7 +35,10 @@ import androidx.compose.ui.unit.sp
 import com.zirakusa.notas.data.Layout
 import com.zirakusa.notas.data.Note
 import com.zirakusa.notas.data.NotesRules
+import com.zirakusa.notas.data.TextEdits
 import com.zirakusa.notas.ui.theme.NotesColors
+import com.zirakusa.notas.ui.theme.Skins
+import com.zirakusa.notas.ui.theme.skin
 
 /** How a card reacts: tap opens (or ticks while selecting), long press starts selecting. */
 class CardActions(val date: (Note) -> String, val selected: Set<Long>, val selecting: Boolean, val onTap: (Note) -> Unit, val onLongPress: (Note) -> Unit)
@@ -56,19 +59,21 @@ class CardActions(val date: (Note) -> String, val selected: Set<Long>, val selec
     }
 }
 
-@Composable private fun NoteCard(note: Note, previewLines: Int, a: CardActions) =
+@Composable private fun NoteCard(note: Note, previewLines: Int, a: CardActions) {
+    val skin = Skins.of(note.color)
     Column(
-        Modifier.fillMaxWidth().clip(RoundedCornerShape(22.dp)).background(NotesColors.Card)
+        Modifier.fillMaxWidth().clip(RoundedCornerShape(22.dp)).then(if (note.color == 0) Modifier.background(NotesColors.Card) else Modifier.skin(skin))
             .combinedClickable(onLongClick = { a.onLongPress(note) }) { a.onTap(note) }.padding(horizontal = 18.dp, vertical = 16.dp),
     ) {
         Row(verticalAlignment = Alignment.Top) {
-            Text(NotesRules.displayTitle(note), Modifier.weight(1f), fontSize = 21.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            Text(TextEdits.plain(NotesRules.displayTitle(note)), Modifier.weight(1f), fontSize = 21.sp, maxLines = 2, overflow = TextOverflow.Ellipsis,
+                color = skin.text)
             if (note.pinned) Icon(Icons.Filled.PushPin, null, Modifier.size(18.dp), tint = NotesColors.Accent)
         }
-        val preview = NotesRules.preview(note)
+        val preview = TextEdits.plain(NotesRules.preview(note))
         if (preview.isNotEmpty()) {   // the whole text, also when its first line is the title (like the phone's notes)
             Spacer(Modifier.height(6.dp))
-            Text(preview, color = NotesColors.Muted, fontSize = 16.sp, maxLines = previewLines, overflow = TextOverflow.Ellipsis)
+            Text(preview, color = skin.muted, fontSize = 16.sp, maxLines = previewLines, overflow = TextOverflow.Ellipsis)
         }
         Spacer(Modifier.height(12.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -77,6 +82,7 @@ class CardActions(val date: (Note) -> String, val selected: Set<Long>, val selec
             if (a.selecting) Tick(note.id in a.selected)
         }
     }
+}
 
 @Composable private fun NoteRow(note: Note, a: CardActions) = Row(
     Modifier.fillMaxWidth().combinedClickable(onLongClick = { a.onLongPress(note) }) { a.onTap(note) }.padding(vertical = 14.dp),
@@ -85,12 +91,12 @@ class CardActions(val date: (Note) -> String, val selected: Set<Long>, val selec
     Column(Modifier.weight(1f)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             if (note.pinned) Icon(Icons.Filled.PushPin, null, Modifier.size(16.dp).padding(end = 4.dp), tint = NotesColors.Accent)
-            Text(NotesRules.displayTitle(note), fontSize = 18.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text(TextEdits.plain(NotesRules.displayTitle(note)), fontSize = 18.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 4.dp)) {
             Text(a.date(note), color = NotesColors.Muted, fontSize = 14.sp)
             Text(
-                NotesRules.preview(note).replace('\n', ' '), Modifier.padding(start = 10.dp),
+                TextEdits.plain(NotesRules.preview(note)).replace('\n', ' '), Modifier.padding(start = 10.dp),
                 color = NotesColors.Muted, fontSize = 14.sp, maxLines = 1, overflow = TextOverflow.Ellipsis,
             )
         }

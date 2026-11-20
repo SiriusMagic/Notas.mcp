@@ -6,6 +6,6 @@
 - Cada versión: sube `versionCode` y `versionName`, copia el APK a `android/Notas-<versión>.apk` (borra el anterior)
   y anótalo en `CHANGELOG.md`.
 - Privacidad: las notas viven solo en el teléfono (`notas.db`, fuera de copias). Nada sale salvo por el Modo MCP que el
-  usuario active (cuando exista).
+  usuario active (cuando exista). El APK no pide internet.
 - Prohibido: SQL concatenado (siempre `?`), `eval` o motores de scripts.
 - Firma: la de depuración del entorno, igual que Stone, Luma, Calculadora y Gateway Hub.

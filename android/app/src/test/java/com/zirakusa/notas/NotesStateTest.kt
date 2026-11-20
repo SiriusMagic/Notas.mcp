@@ -20,7 +20,7 @@ import org.robolectric.RobolectricTestRunner
 class NotesStateTest {
     private var now = 1_000_000L
     private val store = SqlNoteStore(ApplicationProvider.getApplicationContext())
-    private fun state() = NotesState(store) { now }
+    private fun state() = NotesState(store, { now })
 
     @Test fun writeSaveAndReopen() {
         val s = state()
@@ -107,7 +107,7 @@ class NotesStateTest {
     }
 
     @Test fun tasksAddTickEditAndDelete() {
-        val t = TasksState(store) { now }
+        val t = TasksState(store, { now })
         t.startNew(); t.done("  Comprar spray  ")
         t.startNew(); t.done("   ")                                     // empty: not added
         val task = t.tasks.single()
@@ -118,5 +118,57 @@ class NotesStateTest {
         assertTrue(t.visible("negro").isNotEmpty()); assertTrue(t.visible("taladro").isEmpty())
         t.delete(t.tasks.single()); assertTrue(t.tasks.isEmpty())
         t.delete(task)                                                  // not found: nothing happens
+    }
+
+    private class FakeAlarms : com.zirakusa.notas.ui.ReminderScheduler {
+        val set = mutableMapOf<String, Long>()
+        override fun set(kind: String, id: Long, at: Long, text: String) { set["$kind$id"] = at }
+        override fun cancel(kind: String, id: Long) { set.remove("$kind$id") }
+    }
+
+    @Test fun photoKeepsAnEmptyNoteAndMenuActionsSave() {
+        val alarms = FakeAlarms()
+        val s = NotesState(store, { now }, alarms)
+        s.newNote()
+        val file = java.io.File(s.attachmentDir, "p.jpg").apply { writeText("x") }
+        s.attach(com.zirakusa.notas.data.Attachment.Kind.PHOTO, file.name)
+        val id = s.editing!!.note.id
+        assertTrue(id != 0L)
+        s.changeOpen { it.copy(pinned = true, color = 3) }
+        s.remindOpen(now + 60_000)
+        assertEquals(now + 60_000, alarms.set["note$id"])
+        s.closeEditor()
+        val saved = s.notes.single()
+        assertTrue(saved.pinned); assertEquals(3, saved.color)       // kept although it has no text: it has a photo
+        s.open(saved); s.detach(s.editing!!.attachments.single())
+        assertTrue(!file.exists())
+        s.trashOpen()
+        assertNull(alarms.set["note$id"])                             // a deleted note does not ring
+        assertEquals(false, s.openById(id))                          // in the trash: a shortcut does not open it
+        assertEquals(false, s.openById(4242))                        // not found
+    }
+
+    @Test fun editorToolsAndListsWorkThroughEditing() {
+        val s = state()
+        s.newNote()
+        val e = s.editing!!
+        e.changeBody(androidx.compose.ui.text.input.TextFieldValue("Cable", androidx.compose.ui.text.TextRange(5)))
+        e.tool(com.zirakusa.notas.data.TextEdits::cycleCheck)
+        assertEquals("☐ Cable", e.body.text)
+        e.changeBody(androidx.compose.ui.text.input.TextFieldValue("☐ Cable\n", androidx.compose.ui.text.TextRange(8)))
+        assertEquals("☐ Cable\n☐ ", e.body.text)
+        e.undo()
+        assertEquals("☐ Cable", e.body.text)
+    }
+
+    @Test fun taskReminders() {
+        val alarms = FakeAlarms()
+        val t = TasksState(store, { now }, alarms)
+        t.startNew(); t.done("Llamar", now + 5_000)
+        val task = t.tasks.single()
+        assertEquals(now + 5_000, alarms.set["task${task.id}"])
+        t.toggle(task); assertNull(alarms.set["task${task.id}"])     // done: no reminder
+        t.edit(t.tasks.single()); t.done("Llamar", now - 1)          // past time: dropped
+        assertNull(t.tasks.single().remindAt)
     }
 }

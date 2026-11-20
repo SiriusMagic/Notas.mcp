@@ -41,6 +41,7 @@ import com.zirakusa.notas.ui.theme.NotesColors
  */
 @Composable fun InputDialog(
     title: String, initial: String, max: Int, onCancel: () -> Unit, onDone: (String) -> Unit, onDelete: (() -> Unit)? = null,
+    extra: (@Composable () -> Unit)? = null,
 ) = Dialog(onCancel, DialogProperties(usePlatformDefaultWidth = false)) {
     var text by remember(initial) { mutableStateOf(initial) }
     Column(Modifier.padding(horizontal = 20.dp).fillMaxWidth().clip(RoundedCornerShape(32.dp)).background(NotesColors.Raised).padding(24.dp),
@@ -50,6 +51,7 @@ import com.zirakusa.notas.ui.theme.NotesColors
         BasicTextField(text, { text = it.replace("\n", "").take(max) },
             Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp)).background(NotesColors.Chip).padding(16.dp),
             textStyle = TextStyle(color = NotesColors.Text, fontSize = 18.sp), cursorBrush = SolidColor(NotesColors.Accent))
+        extra?.invoke()
         if (onDelete != null) TextButton(onDelete, Modifier.align(Alignment.Start)) { Text(stringResource(R.string.delete), color = NotesColors.Danger) }
         Spacer(Modifier.height(20.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {

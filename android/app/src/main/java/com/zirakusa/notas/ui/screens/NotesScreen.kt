@@ -22,6 +22,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.ViewList
+import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.material.icons.outlined.Search
@@ -65,7 +66,8 @@ private val layouts = listOf(
 )
 
 /** Main screen: drawer button, «Notas | Tareas», view menu, big title, the list, and search + new at the bottom. */
-@Composable fun NotesScreen(state: NotesState, tasks: TasksState, title: String, date: (Note) -> String, onDrawer: () -> Unit) =
+@Composable fun NotesScreen(state: NotesState, tasks: TasksState, title: String, date: (Note) -> String, allowNotifications: () -> Unit = {}, onDrawer: () -> Unit) {
+    var ai by remember { mutableStateOf(false) }
     Box(Modifier.fillMaxSize().background(NotesColors.Background).statusBarsPadding()) {
         Column(Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
             if (state.selecting) SelectionTop(state) else TopRow(state, onDrawer)
@@ -74,9 +76,11 @@ private val layouts = listOf(
             if (state.tab == Tab.TASKS) TasksList(tasks, state.query) else Body(state, date)
         }
         if (state.selecting) SelectionBar(state, Modifier.align(Alignment.BottomCenter))
-        else BottomBar(state, Modifier.align(Alignment.BottomCenter)) { if (state.tab == Tab.TASKS) tasks.startNew() else state.newNote() }
-        TaskDialog(tasks)
+        else BottomBar(state, Modifier.align(Alignment.BottomCenter), { ai = true }) { if (state.tab == Tab.TASKS) tasks.startNew() else state.newNote() }
+        TaskDialog(tasks, allowNotifications)
+        if (ai) AiPanel { ai = false }
     }
+}
 
 @Composable private fun TopRow(state: NotesState, onDrawer: () -> Unit) = Row(Modifier.fillMaxWidth().padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
     RoundButton(Icons.Outlined.ViewSidebar, stringResource(R.string.folders), onClick = onDrawer)
@@ -121,7 +125,7 @@ private val layouts = listOf(
 @Composable private fun Message(text: String) =
     Box(Modifier.fillMaxWidth().padding(top = 120.dp), contentAlignment = Alignment.Center) { Text(text, color = NotesColors.Muted, fontSize = 17.sp) }
 
-@Composable private fun BottomBar(state: NotesState, modifier: Modifier, onNew: () -> Unit) =
+@Composable private fun BottomBar(state: NotesState, modifier: Modifier, onAi: () -> Unit, onNew: () -> Unit) =
     Row(modifier.fillMaxWidth().navigationBarsPadding().imePadding().padding(horizontal = 16.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
         Row(Modifier.weight(1f).height(56.dp).clip(CircleShape).background(NotesColors.Raised).padding(horizontal = 18.dp),
@@ -133,6 +137,7 @@ private val layouts = listOf(
                 cursorBrush = SolidColor(NotesColors.Accent),
                 decorationBox = { inner -> Box { if (state.query.isEmpty()) Text(stringResource(R.string.search), style = style.copy(color = NotesColors.Muted)); inner() } })
         }
+        if (state.tab == Tab.NOTES && state.section != Section.Trash) RoundButton(Icons.Outlined.AutoAwesome, stringResource(R.string.ai_notes), onClick = onAi)
         val label = stringResource(if (state.tab == Tab.TASKS) R.string.new_task else R.string.new_note)
         if (state.tab == Tab.TASKS || state.section != Section.Trash) RoundButton(Icons.Outlined.Edit, label, onClick = onNew)
     }

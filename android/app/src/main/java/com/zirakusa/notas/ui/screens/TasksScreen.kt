@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.outlined.Alarm
 import androidx.compose.material.icons.outlined.Sell
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -76,13 +77,29 @@ import com.zirakusa.notas.ui.theme.NotesColors
             contentAlignment = Alignment.Center,
         ) { if (task.done) Icon(Icons.Filled.Check, label, Modifier.size(18.dp), tint = NotesColors.Background) }
         Spacer(Modifier.width(14.dp))
-        Text(task.text, fontSize = 18.sp, color = if (task.done) NotesColors.Muted else NotesColors.Text,
-            textDecoration = if (task.done) TextDecoration.LineThrough else null)
+        Column {
+            Text(task.text, fontSize = 18.sp, color = if (task.done) NotesColors.Muted else NotesColors.Text,
+                textDecoration = if (task.done) TextDecoration.LineThrough else null)
+            task.remindAt?.let { Text(when_(it), color = NotesColors.Accent, fontSize = 13.sp) }
+        }
     }
 
-/** «Nueva tarea» (or editing one), with «Eliminar» for an existing task. */
-@Composable fun TaskDialog(tasks: TasksState) {
+/** «Nueva tarea» (or editing one), with «Añadir un recordatorio.» and «Eliminar» for an existing task. */
+@Composable fun TaskDialog(tasks: TasksState, allowNotifications: () -> Unit = {}) {
     val task = tasks.editing ?: return
-    InputDialog(stringResource(if (task.id == 0L) R.string.new_task else R.string.edit_task), task.text, 500, tasks::cancel, tasks::done,
-        onDelete = if (task.id != 0L) ({ tasks.delete(task) }) else null)
+    var remind by remember(task) { mutableStateOf(task.remindAt) }
+    var picking by remember(task) { mutableStateOf(false) }
+    InputDialog(stringResource(if (task.id == 0L) R.string.new_task else R.string.edit_task), task.text, 500, tasks::cancel, { tasks.done(it, remind) },
+        onDelete = if (task.id != 0L) ({ tasks.delete(task) }) else null,
+        extra = {
+            Row(Modifier.fillMaxWidth().padding(top = 14.dp).clickable { picking = true }, verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Outlined.Alarm, null, tint = if (remind != null) NotesColors.Accent else NotesColors.Muted)
+                Spacer(Modifier.width(10.dp))
+                Text(remind?.let { when_(it) } ?: stringResource(R.string.add_reminder), color = if (remind != null) NotesColors.Accent else NotesColors.Text, fontSize = 16.sp)
+            }
+        })
+    if (picking) ReminderPicker(remind, { at -> if (at != null) allowNotifications(); remind = at; picking = false }) { picking = false }
 }
+
+private fun when_(millis: Long): String = java.time.Instant.ofEpochMilli(millis).atZone(java.time.ZoneId.systemDefault())
+    .format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy, hh:mm a"))

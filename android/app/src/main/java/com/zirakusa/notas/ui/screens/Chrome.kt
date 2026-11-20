@@ -5,6 +5,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -15,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -22,11 +25,33 @@ import androidx.compose.ui.unit.sp
 import com.zirakusa.notas.ui.theme.NotesColors
 
 /** Round dark button with one icon (drawer, view, back, more…). */
-@Composable fun RoundButton(icon: ImageVector, label: String, modifier: Modifier = Modifier, enabled: Boolean = true, onClick: () -> Unit) =
+@Composable fun RoundButton(icon: ImageVector, label: String, modifier: Modifier = Modifier, enabled: Boolean = true, light: Boolean = false, onClick: () -> Unit) =
     Box(
-        modifier.size(52.dp).clip(CircleShape).background(NotesColors.Card).clickable(enabled = enabled, onClick = onClick),
+        modifier.size(52.dp).clip(CircleShape).background(if (light) LightChrome.Button else NotesColors.Card).clickable(enabled = enabled, onClick = onClick),
         contentAlignment = Alignment.Center,
-    ) { Icon(icon, label, tint = if (enabled) NotesColors.Text else NotesColors.Muted.copy(alpha = 0.5f)) }
+    ) { Icon(icon, label, tint = tint(light, enabled)) }
+
+/** Buttons over a light background (white circles, dark icons), like the phone's notes. */
+object LightChrome {
+    val Button = Color(0xFFFFFFFF)
+    val Icon = Color(0xFF222222)
+}
+
+fun tint(light: Boolean, enabled: Boolean = true) = when {
+    !enabled -> (if (light) LightChrome.Icon else NotesColors.Muted).copy(alpha = 0.35f)
+    light -> LightChrome.Icon
+    else -> NotesColors.Text
+}
+
+/** Several icon buttons in one rounded pill (↶ ↷, or share · background · ⋮). */
+@Composable fun IconPill(light: Boolean, content: @Composable RowScope.() -> Unit) =
+    Row(Modifier.height(52.dp).clip(CircleShape).background(if (light) LightChrome.Button else NotesColors.Card).padding(horizontal = 6.dp),
+        verticalAlignment = Alignment.CenterVertically, content = content)
+
+@Composable fun PillIcon(icon: ImageVector, label: String, light: Boolean, enabled: Boolean = true, selected: Boolean = false, onClick: () -> Unit) =
+    Box(Modifier.size(48.dp).clip(CircleShape).clickable(enabled = enabled, onClick = onClick), contentAlignment = Alignment.Center) {
+        Icon(icon, label, tint = if (selected) NotesColors.Accent else tint(light, enabled))
+    }
 
 /** The «Notas | Tareas» pill at the top. */
 @Composable fun Segmented(options: List<String>, selected: Int, onSelect: (Int) -> Unit) =
