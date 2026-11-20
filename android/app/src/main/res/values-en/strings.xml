@@ -1,0 +1,62 @@
+<resources>
+    <string name="app_name">Notes</string>
+    <string name="notes">Notes</string>
+    <string name="tasks">Tasks</string>
+    <string name="folders">Folders</string>
+    <string name="new_folder_short">New</string>
+    <string name="all_notes">All notes</string>
+    <string name="uncategorized">Uncategorized</string>
+    <string name="locked">Locked</string>
+    <string name="trash">Recently deleted</string>
+    <string name="search">Search</string>
+    <string name="new_note">New note</string>
+    <string name="view">Change view</string>
+    <string name="view_list">List view</string>
+    <string name="view_card">Card view</string>
+    <string name="view_grid">Grid view</string>
+    <string name="title_hint">Title</string>
+    <string name="body_hint">Write a note</string>
+    <string name="back">Back</string>
+    <string name="undo">Undo</string>
+    <string name="redo">Redo</string>
+    <string name="more">More options</string>
+    <string name="move_to">Move to folder</string>
+    <string name="delete">Delete</string>
+    <string name="restore">Restore</string>
+    <string name="delete_forever">Delete forever</string>
+    <string name="empty_trash">Empty</string>
+    <string name="no_notes">No notes</string>
+    <string name="no_results">No results</string>
+    <string name="new_folder">New folder</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete_folder">Delete folder</string>
+    <string name="delete_folder_info">Notes in «%1$s» go back to Uncategorized.</string>
+    <string name="pin">Pin</string>
+    <string name="lock">Lock</string>
+    <string name="unlock">Unlock</string>
+    <string name="select_all">Select all</string>
+    <plurals name="selected">
+        <item quantity="one">%1$d item selected</item>
+        <item quantity="other">%1$d items selected</item>
+    </plurals>
+    <string name="no_tasks">No tasks</string>
+    <string name="new_task">New task</string>
+    <string name="edit_task">Edit task</string>
+    <string name="done">Done</string>
+    <string name="task_done">Mark as done</string>
+    <string name="task_undo">Mark as pending</string>
+    <string name="unlock_subtitle">Use the phone\'s lock to see locked notes</string>
+    <string name="no_screen_lock">Set a screen lock on the phone to use Locked.</string>
+    <plurals name="trash_info">
+        <item quantity="one">Deleted notes are kept here for %1$d day.</item>
+        <item quantity="other">Deleted notes are kept here for %1$d days.</item>
+    </plurals>
+    <plurals name="days_left">
+        <item quantity="one">%1$d day left</item>
+        <item quantity="other">%1$d days left</item>
+    </plurals>
+    <plurals name="characters">
+        <item quantity="one">%1$d character</item>
+        <item quantity="other">%1$d characters</item>
+    </plurals>
+</resources>

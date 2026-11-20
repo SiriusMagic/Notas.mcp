@@ -1,0 +1,62 @@
+<resources>
+    <string name="app_name">Notas</string>
+    <string name="notes">Notas</string>
+    <string name="tasks">Tareas</string>
+    <string name="folders">Carpetas</string>
+    <string name="new_folder_short">Nuevo</string>
+    <string name="all_notes">Todas las notas</string>
+    <string name="uncategorized">Sin categoría</string>
+    <string name="locked">Bloqueado</string>
+    <string name="trash">Recientemente eliminados</string>
+    <string name="search">Buscar</string>
+    <string name="new_note">Nueva nota</string>
+    <string name="view">Cambiar vista</string>
+    <string name="view_list">Vista de lista</string>
+    <string name="view_card">Vista de tarjeta</string>
+    <string name="view_grid">Vista en cuadrícula</string>
+    <string name="title_hint">Título</string>
+    <string name="body_hint">Escriba una nota</string>
+    <string name="back">Atrás</string>
+    <string name="undo">Deshacer</string>
+    <string name="redo">Rehacer</string>
+    <string name="more">Más opciones</string>
+    <string name="move_to">Mover a carpeta</string>
+    <string name="delete">Eliminar</string>
+    <string name="restore">Restaurar</string>
+    <string name="delete_forever">Eliminar definitivamente</string>
+    <string name="empty_trash">Vaciar</string>
+    <string name="no_notes">Sin notas</string>
+    <string name="no_results">Sin resultados</string>
+    <string name="new_folder">Nueva carpeta</string>
+    <string name="cancel">Cancelar</string>
+    <string name="delete_folder">Eliminar carpeta</string>
+    <string name="delete_folder_info">Las notas de «%1$s» vuelven a «Sin categoría».</string>
+    <string name="pin">Fijar</string>
+    <string name="lock">Bloquear</string>
+    <string name="unlock">Desbloquear</string>
+    <string name="select_all">Seleccionar todo</string>
+    <plurals name="selected">
+        <item quantity="one">%1$d elemento seleccionado</item>
+        <item quantity="other">%1$d elementos seleccionados</item>
+    </plurals>
+    <string name="no_tasks">Sin tareas</string>
+    <string name="new_task">Nueva tarea</string>
+    <string name="edit_task">Editar tarea</string>
+    <string name="done">Hecho</string>
+    <string name="task_done">Marcar como hecha</string>
+    <string name="task_undo">Marcar como pendiente</string>
+    <string name="unlock_subtitle">Usa el bloqueo del teléfono para ver las notas bloqueadas</string>
+    <string name="no_screen_lock">Pon un bloqueo de pantalla en el teléfono para usar «Bloqueado».</string>
+    <plurals name="trash_info">
+        <item quantity="one">Las notas eliminadas se guardan aquí %1$d día.</item>
+        <item quantity="other">Las notas eliminadas se guardan aquí %1$d días.</item>
+    </plurals>
+    <plurals name="days_left">
+        <item quantity="one">Queda %1$d día</item>
+        <item quantity="other">Quedan %1$d días</item>
+    </plurals>
+    <plurals name="characters">
+        <item quantity="one">%1$d carácter</item>
+        <item quantity="other">%1$d caracteres</item>
+    </plurals>
+</resources>
