@@ -10,6 +10,8 @@ import com.zirakusa.notas.data.Note
 import com.zirakusa.notas.data.NoteStore
 import com.zirakusa.notas.data.NotesRules
 import com.zirakusa.notas.data.Section
+import com.zirakusa.notas.ui.theme.Accent
+import com.zirakusa.notas.ui.theme.ThemeMode
 
 enum class Tab { NOTES, TASKS }
 
@@ -43,6 +45,14 @@ class NotesState(
     var layout by mutableStateOf(store.setting(LAYOUT)?.let { runCatching { Layout.valueOf(it) }.getOrNull() } ?: Layout.GRID)
         private set
     var editing by mutableStateOf<Editing?>(null); private set
+    /** Ajustes › Tema and Color de acento: the whole app, apart from each note's «Fondo». */
+    var themeMode by mutableStateOf(store.setting(THEME)?.let { runCatching { ThemeMode.valueOf(it) }.getOrNull() } ?: ThemeMode.DARK)
+        private set
+    var accent by mutableStateOf(store.setting(ACCENT)?.let { runCatching { Accent.valueOf(it) }.getOrNull() } ?: Accent.AMARILLO)
+        private set
+
+    fun changeTheme(mode: ThemeMode) { themeMode = mode; store.putSetting(THEME, mode.name) }
+    fun changeAccent(next: Accent) { accent = next; store.putSetting(ACCENT, next.name) }
 
     init {
         // Notes that stayed 30 days in the trash are removed when the app opens.
@@ -219,6 +229,8 @@ class NotesState(
 
     companion object {
         private const val LAYOUT = "layout"
+        private const val THEME = "theme"
+        private const val ACCENT = "accent"
         const val NOTE = "note"
     }
 }

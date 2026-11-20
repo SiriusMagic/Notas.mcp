@@ -155,4 +155,16 @@
     <string name="widget_note_small_desc">La nota más reciente o fijada, en pequeño</string>
     <string name="widget_list_desc">Tus últimas notas</string>
     <string name="widget_tasks_desc">Tus tareas: márcalas o añade una</string>
+    <string name="theme">Tema</string>
+    <string name="theme_hint">Para toda la app. El «Fondo» de cada nota se mantiene aparte.</string>
+    <string name="theme_system">Sistema</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Oscuro</string>
+    <string name="accent">Color de acento</string>
+    <string name="accent_yellow">Amarillo</string>
+    <string name="accent_orange">Naranja</string>
+    <string name="accent_pink">Rosa</string>
+    <string name="accent_purple">Morado</string>
+    <string name="accent_blue">Azul</string>
+    <string name="accent_green">Verde</string>
 </resources>

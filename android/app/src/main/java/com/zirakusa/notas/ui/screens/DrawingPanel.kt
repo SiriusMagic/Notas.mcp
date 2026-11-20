@@ -107,7 +107,7 @@ private val inks = listOf(Color(0xFF111111), Color(0xFFE53935), Color(0xFF1E88E5
 
 @Composable private fun Tool(icon: ImageVector, label: Int, on: Boolean, onClick: () -> Unit) =
     Box(Modifier.size(52.dp).clip(CircleShape).background(if (on) NotesColors.Accent else NotesColors.Card).clickable(onClick = onClick),
-        contentAlignment = Alignment.Center) { Icon(icon, stringResource(label), tint = if (on) NotesColors.Background else NotesColors.Text) }
+        contentAlignment = Alignment.Center) { Icon(icon, stringResource(label), tint = if (on) NotesColors.OnAccent else NotesColors.Text) }
 
 private fun path(points: List<Offset>) = Path().apply { moveTo(points[0].x, points[0].y); points.drop(1).forEach { lineTo(it.x, it.y) } }
 

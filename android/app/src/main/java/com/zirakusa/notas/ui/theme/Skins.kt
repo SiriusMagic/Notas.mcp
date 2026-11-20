@@ -19,6 +19,7 @@ data class Skin(val brush: Brush, val light: Boolean, val pattern: Pattern = Pat
 /** The backgrounds, in the order of the picker. Index 0 is «sin fondo» (the dark default); the index is kept in the note. */
 object Skins {
     private fun solid(c: Long) = Brush.verticalGradient(listOf(Color(c), Color(c)))
+    private fun solid(c: Color) = Brush.verticalGradient(listOf(c, c))
     private fun fade(a: Long, b: Long) = Brush.linearGradient(listOf(Color(a), Color(b)))
 
     val all = listOf(
@@ -35,7 +36,8 @@ object Skins {
         Skin(fade(0xFF1E2A1E, 0xFF3D5A3A), light = false),
     )
 
-    fun of(index: Int) = all.getOrElse(index) { all[0] }
+    /** Index 0 («sin fondo») follows the app's theme (Ajustes › Tema); the others are the note's own. */
+    fun of(index: Int) = if (index <= 0 || index >= all.size) Skin(solid(NotesColors.Background), NotesColors.isLight) else all[index]
 }
 
 /** Paints [skin] behind the content: colour first, then its lines, grid or dots every 28 dp. */

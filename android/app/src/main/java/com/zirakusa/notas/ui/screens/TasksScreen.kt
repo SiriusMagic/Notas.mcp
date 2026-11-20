@@ -75,7 +75,7 @@ import com.zirakusa.notas.ui.theme.NotesColors
             Modifier.size(26.dp).clip(CircleShape).background(if (task.done) NotesColors.Accent else NotesColors.Card)
                 .border(2.dp, if (task.done) NotesColors.Accent else NotesColors.Muted, CircleShape).clickable(onClickLabel = label) { tasks.toggle(task) },
             contentAlignment = Alignment.Center,
-        ) { if (task.done) Icon(Icons.Filled.Check, label, Modifier.size(18.dp), tint = NotesColors.Background) }
+        ) { if (task.done) Icon(Icons.Filled.Check, label, Modifier.size(18.dp), tint = NotesColors.OnAccent) }
         Spacer(Modifier.width(14.dp))
         Column {
             Text(task.text, fontSize = 18.sp, color = if (task.done) NotesColors.Muted else NotesColors.Text,

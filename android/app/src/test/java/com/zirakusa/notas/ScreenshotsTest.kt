@@ -125,4 +125,23 @@ class ScreenshotsTest {
         val tasks = com.zirakusa.notas.widget.Widgets.views(context, com.zirakusa.notas.widget.TasksWidget::class.java, store).apply(context, null)
         assertEquals(1, tasks.findViewById<android.widget.LinearLayout>(R.id.rows).childCount)
     }
+
+    @Test fun lightThemeWithBlueAccent() {
+        val store = SqlNoteStore(ApplicationProvider.getApplicationContext())
+        store.save(Note(title = "Hh", body = "Cajetines\nSpray negro", createdAt = 1, updatedAt = 1_763_500_000_000))
+        store.save(Note(title = "Fidelio", body = "151 metros", color = 5, createdAt = 2, updatedAt = 1_763_400_000_000))
+        val state = NotesState(store)
+        state.changeTheme(com.zirakusa.notas.ui.theme.ThemeMode.LIGHT); state.changeAccent(com.zirakusa.notas.ui.theme.Accent.AZUL)
+        compose.setContent { NotesTheme(state.themeMode, state.accent) { NotesApp(state, TasksState(store)) } }
+        compose.onNodeWithText("Fidelio").assertExists()
+        onView(isRoot()).captureRoboImage("build/screenshots/notas-light.png")
+        state.page = com.zirakusa.notas.ui.Page.SETTINGS
+        compose.onNodeWithText("Color de acento").assertExists()
+        onView(isRoot()).captureRoboImage("build/screenshots/notas-settings-theme.png")
+        compose.onNodeWithText("Oscuro").performClick()
+        assertEquals(com.zirakusa.notas.ui.theme.ThemeMode.DARK, state.themeMode)
+        compose.onNodeWithContentDescription("Verde").performClick()
+        assertEquals(com.zirakusa.notas.ui.theme.Accent.VERDE, state.accent)
+        onView(isRoot()).captureRoboImage("build/screenshots/notas-settings-dark-green.png")
+    }
 }

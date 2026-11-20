@@ -155,4 +155,16 @@
     <string name="widget_note_small_desc">Your newest or pinned note, small</string>
     <string name="widget_list_desc">Your latest notes</string>
     <string name="widget_tasks_desc">Your tasks: tick them or add one</string>
+    <string name="theme">Theme</string>
+    <string name="theme_hint">For the whole app. Each note\'s Background stays its own.</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="accent">Accent colour</string>
+    <string name="accent_yellow">Yellow</string>
+    <string name="accent_orange">Orange</string>
+    <string name="accent_pink">Pink</string>
+    <string name="accent_purple">Purple</string>
+    <string name="accent_blue">Blue</string>
+    <string name="accent_green">Green</string>
 </resources>

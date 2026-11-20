@@ -45,7 +45,8 @@ class AppActions(
 ) {
     when (state.page) {
         Page.MAIN -> Unit
-        Page.SETTINGS -> return SettingsScreen(onMcp = { state.page = Page.MCP }) { state.page = Page.MAIN }
+        Page.SETTINGS -> return SettingsScreen(state.themeMode, state.accent, state::changeTheme, state::changeAccent,
+            onMcp = { state.page = Page.MCP }) { state.page = Page.MAIN }
         Page.MCP -> return McpScreen(actions.copy, actions.goToHub) { state.page = Page.SETTINGS }
         Page.WIDGETS -> return WidgetsScreen(NotesRules.visible(state.notes, Section.All), tasks.tasks,
             { NotesRules.shortDate(it.updatedAt, now()) }, actions.pinWidget) { state.page = Page.MAIN }

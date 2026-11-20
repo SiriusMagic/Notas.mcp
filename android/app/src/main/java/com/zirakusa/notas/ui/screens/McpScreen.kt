@@ -49,12 +49,12 @@ import com.zirakusa.notas.mcp.Token
                 Text(stringResource(R.string.mcp_redirect_hint), Modifier.weight(1f), color = NotesColors.Muted)
                 Switch(McpMode.hubRedirect, McpMode::redirect, colors = accent())
             }
-            if (McpMode.hubRedirect) Button(goToHub, colors = ButtonDefaults.buttonColors(NotesColors.Accent, Color.Black)) { Text(stringResource(R.string.mcp_go_to_hub)) }
+            if (McpMode.hubRedirect) Button(goToHub, colors = ButtonDefaults.buttonColors(NotesColors.Accent, NotesColors.OnAccent)) { Text(stringResource(R.string.mcp_go_to_hub)) }
         }
         if (McpMode.hubRedirect) return@Column
         Card(stringResource(R.string.mcp_tokens)) {
             if (creating) Editor({ creating = false }) { copy(McpMode.linkFor(it.secret)); creating = false }
-            else Button({ creating = true }, colors = ButtonDefaults.buttonColors(NotesColors.Accent, Color.Black)) { Text(stringResource(R.string.mcp_create)) }
+            else Button({ creating = true }, colors = ButtonDefaults.buttonColors(NotesColors.Accent, NotesColors.OnAccent)) { Text(stringResource(R.string.mcp_create)) }
             McpMode.listed.forEach { TokenRow(it, copy) }
         }
     }
@@ -92,19 +92,19 @@ import com.zirakusa.notas.mcp.Token
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         listOf(0, 7, 30, 90, 365).forEach { d ->
             FilterChip(days == d, { days = d }, { Text(if (d == 0) stringResource(R.string.mcp_forever) else stringResource(R.string.mcp_days, d)) },
-                colors = FilterChipDefaults.filterChipColors(selectedContainerColor = NotesColors.Accent, selectedLabelColor = Color.Black))
+                colors = FilterChipDefaults.filterChipColors(selectedContainerColor = NotesColors.Accent, selectedLabelColor = NotesColors.OnAccent))
         }
     }
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
         TextButton(onCancel) { Text(stringResource(R.string.cancel), color = NotesColors.Text) }
-        Button({ onCreated(McpMode.create(name, access, kind, usage, days)) }, colors = ButtonDefaults.buttonColors(NotesColors.Accent, Color.Black)) {
+        Button({ onCreated(McpMode.create(name, access, kind, usage, days)) }, colors = ButtonDefaults.buttonColors(NotesColors.Accent, NotesColors.OnAccent)) {
             Text(stringResource(R.string.mcp_create_copy))
         }
     }
 }
 
 @Composable private fun Chip(on: Boolean, label: Int, onClick: () -> Unit) = FilterChip(on, onClick, { Text(stringResource(label)) },
-    colors = FilterChipDefaults.filterChipColors(selectedContainerColor = NotesColors.Accent, selectedLabelColor = Color.Black))
+    colors = FilterChipDefaults.filterChipColors(selectedContainerColor = NotesColors.Accent, selectedLabelColor = NotesColors.OnAccent))
 
 @Composable private fun TokenRow(token: Token, copy: (String) -> Unit) {
     var confirm by remember { mutableStateOf(false) }

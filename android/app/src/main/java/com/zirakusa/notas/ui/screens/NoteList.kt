@@ -109,4 +109,4 @@ class CardActions(val date: (Note) -> String, val selected: Set<Long>, val selec
     Modifier.size(26.dp).clip(RoundedCornerShape(7.dp)).background(if (on) NotesColors.Accent else NotesColors.Card)
         .border(2.dp, if (on) NotesColors.Accent else NotesColors.Muted, RoundedCornerShape(7.dp)),
     contentAlignment = Alignment.Center,
-) { if (on) Icon(Icons.Filled.Check, null, Modifier.size(18.dp), tint = NotesColors.Background) }
+) { if (on) Icon(Icons.Filled.Check, null, Modifier.size(18.dp), tint = NotesColors.OnAccent) }

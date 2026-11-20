@@ -12,8 +12,8 @@ android {
         applicationId = "com.zirakusa.notas"
         minSdk = 26
         targetSdk = 36
-        versionCode = 3
-        versionName = "0.3.0"
+        versionCode = 4
+        versionName = "0.4.0"
         // ML Kit's on-device text recognition is native code: only 64-bit ARM phones (all recent ones), like Luma.
         ndk { abiFilters += "arm64-v8a" }
         // Modo MCP: the same public relay as Stone, Luma and Calculadora (one device id per app). Empty = no MCP.

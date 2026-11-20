@@ -6,6 +6,10 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
 import android.widget.Toast
+import androidx.compose.runtime.SideEffect
+import androidx.core.view.WindowCompat
+import com.zirakusa.notas.ui.theme.NotesColors
+import com.zirakusa.notas.ui.theme.Skins
 import androidx.core.net.toUri
 import com.zirakusa.notas.mcp.McpMode
 import com.zirakusa.notas.ui.AppActions
@@ -48,7 +52,14 @@ class MainActivity : FragmentActivity() {
         McpMode.onChanged = { state.refresh(); tasks.refresh(); widgets() }
         if (savedInstanceState == null) handle(intent)
         setContent {
-            NotesTheme {
+            NotesTheme(state.themeMode, state.accent) {
+                // Status and navigation bar icons dark on light screens (the app's theme, or a note's light «Fondo»).
+                val lightBars = state.editing?.let { Skins.of(it.note.color).light } ?: NotesColors.isLight
+                SideEffect {
+                    WindowCompat.getInsetsController(window, window.decorView).run {
+                        isAppearanceLightStatusBars = lightBars; isAppearanceLightNavigationBars = lightBars
+                    }
+                }
                 BackHandler(state.editing != null || state.selecting || state.page != Page.MAIN) {
                     when {
                         state.editing != null -> state.closeEditor()

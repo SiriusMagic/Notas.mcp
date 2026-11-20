@@ -57,7 +57,7 @@ import com.zirakusa.notas.ui.theme.NotesColors
     }
 }
 
-private fun color(on: Boolean) = if (on) NotesColors.Background else NotesColors.Text
+private fun color(on: Boolean) = if (on) NotesColors.OnAccent else NotesColors.Text
 
 @Composable private fun Group(content: @Composable RowScope.() -> Unit) =
     Row(Modifier.height(56.dp).clip(RoundedCornerShape(16.dp)).background(NotesColors.Chip), horizontalArrangement = Arrangement.spacedBy(1.dp), content = content)

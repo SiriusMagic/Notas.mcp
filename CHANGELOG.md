@@ -1,3 +1,11 @@
+# Notas 0.4.0
+
+- **Ajustes › Tema**, para toda la app: **Sistema**, **Claro** u **Oscuro**, y **Color de acento** (amarillo, naranja,
+  rosa, morado, azul o verde). Es independiente del «Fondo» de cada nota: una nota con fondo propio lo conserva; las
+  notas «sin fondo» siguen el tema.
+- Los iconos de la barra de estado se ven oscuros sobre pantallas claras (tema claro o nota con fondo claro).
+- 37 pruebas.
+
 # Notas 0.3.0
 
 - **Ajustes** (abajo en el cajón) con el **Modo MCP**, igual que Stone, Luma y Calculadora: Activar MCP, Crear token

@@ -171,4 +171,16 @@ class NotesStateTest {
         t.edit(t.tasks.single()); t.done("Llamar", now - 1)          // past time: dropped
         assertNull(t.tasks.single().remindAt)
     }
+
+    @Test fun themeIsGlobalAndKept() {
+        val s = state()
+        assertEquals(com.zirakusa.notas.ui.theme.ThemeMode.DARK, s.themeMode)
+        s.changeTheme(com.zirakusa.notas.ui.theme.ThemeMode.LIGHT); s.changeAccent(com.zirakusa.notas.ui.theme.Accent.AZUL)
+        add(s, "a")
+        s.open(s.notes.single()); s.changeOpen { it.copy(color = 4) }; s.closeEditor()
+        val again = state()
+        assertEquals(com.zirakusa.notas.ui.theme.ThemeMode.LIGHT, again.themeMode)
+        assertEquals(com.zirakusa.notas.ui.theme.Accent.AZUL, again.accent)
+        assertEquals(4, again.notes.single().color)                 // the note keeps its own background
+    }
 }

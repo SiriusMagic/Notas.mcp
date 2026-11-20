@@ -7,7 +7,7 @@ Carpeta = package (`android/app/src/main/java/com/zirakusa/notas/`):
 | `data/` | `Note`, `Folder`, `Task`, `Attachment`, `Section` y `Layout` (modelos); `TextEdits` (herramientas de texto puras: títulos, marcas, listas, casillas, tablas, Enter que sigue la lista; con pruebas); `NotesRules` (reglas puras: qué muestra cada carpeta, búsqueda sin acentos, título por la primera línea, fechas, papelera de 30 días; con pruebas); `NoteStore`/`SqlNoteStore` (SQLite local `notas.db` versión 2 con `onUpgrade` probado, siempre con parámetros; fotos y dibujos en `files/attachments`). |
 | `ui/` | `NotesState` (único dueño del estado de notas: carpeta, búsqueda, vista, selección, editor, bloqueo), `TasksState` (tareas), `Editing` (la nota abierta: texto con cursor, leer/escribir, adjuntos), `NoteFormat` (muestra las marcas como formato sin mover el cursor), `EditorPlatform` (lo que el editor pide al teléfono), `UndoHistory` (deshacer/rehacer por palabras) y `NotesApp` (cajón, lista o editor, diálogos). |
 | `ui/screens/` | `NotesScreen` (barra de arriba, título grande, barra de búsqueda), `NoteList` (lista, tarjeta, cuadrícula), `SelectionBar` (fijar, bloquear, mover, eliminar), `FolderDrawer`, `EditorScreen`, `TasksScreen`, `InputDialog` y `Chrome` (botones redondos, píldoras). Editor: `EditorScreen`, `EditorBars` (barras y paneles), `FormatPanel` (Aa), `Panels` (cámara, fondo, IA), `NoteMenu` (⋮), `DrawingPanel`, `Attachments` y `ReminderPicker`. También `SettingsScreen` (Ajustes), `McpScreen` (Modo MCP) y `WidgetsScreen` («Añadir widget»). Solo pintan y avisan. |
-| `ui/theme/` | Colores (negro, gris oscuro y el amarillo de Stone) y `Skins` (los fondos de nota). |
+| `ui/theme/` | `Theme` (tema global: `ThemeMode` Sistema/Claro/Oscuro, `Accent` y `NotesColors`, que todas las pantallas leen) y `Skins` (el «Fondo» de cada nota; el 0 sigue el tema). |
 | `Platform.kt` | Cámara, galería, reconocimiento de texto, dictado, compartir y acceso directo (implementa `EditorPlatform`). |
 | `NoteFiles.kt` | Fotos al derecho y a 2048 px, dibujos en PNG, comprimir, y ML Kit para leer texto (en el teléfono). |
 | `Reminders.kt` | `AlarmReminders` (una alarma por nota o tarea), `ReminderReceiver` (notificación) y `BootReceiver` (las repone al reiniciar). |
@@ -18,6 +18,8 @@ Carpeta = package (`android/app/src/main/java/com/zirakusa/notas/`):
 
 Reglas:
 - Texto visible en `res/values/strings.xml` (español) y `values-en`.
+- Colores siempre de `NotesColors` (nunca fijos en una pantalla), para que el tema global llegue a todo. Encima del
+  acento se usa `NotesColors.OnAccent`.
 - Archivos de pantalla de unas 150 líneas como mucho; si crece, se divide.
 - Los diálogos con campo de texto usan `InputDialog` (ancho completo): el `AlertDialog` estándar con un campo no llega a
   quedar quieto en las pruebas de Robolectric.

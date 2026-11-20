@@ -36,16 +36,44 @@ import com.zirakusa.notas.BuildConfig
 import com.zirakusa.notas.R
 import com.zirakusa.notas.mcp.McpMode
 import com.zirakusa.notas.mcp.RelayLink
+import com.zirakusa.notas.ui.theme.Accent
 import com.zirakusa.notas.ui.theme.NotesColors
+import com.zirakusa.notas.ui.theme.ThemeMode
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 
-/** «Ajustes»: Modo MCP (the connector for your AI), privacy and version. */
-@Composable fun SettingsScreen(onMcp: () -> Unit, onBack: () -> Unit) {
+/** «Ajustes»: Tema (the whole app, apart from each note's «Fondo»), Modo MCP (the connector for your AI), privacy and version. */
+@Composable fun SettingsScreen(mode: ThemeMode, accent: Accent, onMode: (ThemeMode) -> Unit, onAccent: (Accent) -> Unit, onMcp: () -> Unit, onBack: () -> Unit) {
     var privacy by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxSize().background(NotesColors.Background).systemBarsPadding().padding(16.dp).verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             RoundButton(Icons.AutoMirrored.Outlined.ArrowBack, stringResource(R.string.back), onClick = onBack)
             Text(stringResource(R.string.settings), Modifier.padding(start = 16.dp), fontSize = 26.sp)
+        }
+        Group {
+            Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                Text(stringResource(R.string.theme), fontSize = 18.sp)
+                Text(stringResource(R.string.theme_hint), color = NotesColors.Muted, fontSize = 14.sp)
+                Segmented(listOf(stringResource(R.string.theme_system), stringResource(R.string.theme_light), stringResource(R.string.theme_dark)),
+                    mode.ordinal) { onMode(ThemeMode.entries[it]) }
+                Text(stringResource(R.string.accent), fontSize = 16.sp)
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Accent.entries.forEach { a ->
+                        val name = stringResource(accentNames.getValue(a))
+                        Box(Modifier.size(40.dp).clip(CircleShape).background(a.color)
+                            .border(3.dp, if (a == accent) NotesColors.Text else Color.Transparent, CircleShape)
+                            .clickable(onClickLabel = name) { onAccent(a) }.semantics { contentDescription = name },
+                            contentAlignment = Alignment.Center) { if (a == accent) Icon(Icons.Filled.Check, null, Modifier.size(20.dp), tint = a.ink) }
+                    }
+                }
+            }
         }
         Group {
             val status = when {
@@ -79,3 +107,8 @@ import com.zirakusa.notas.ui.theme.NotesColors
         }
         if (onClick != null) Icon(Icons.AutoMirrored.Outlined.KeyboardArrowRight, null, tint = NotesColors.Muted)
     }
+
+private val accentNames = mapOf(
+    Accent.AMARILLO to R.string.accent_yellow, Accent.NARANJA to R.string.accent_orange, Accent.ROSA to R.string.accent_pink,
+    Accent.MORADO to R.string.accent_purple, Accent.AZUL to R.string.accent_blue, Accent.VERDE to R.string.accent_green,
+)

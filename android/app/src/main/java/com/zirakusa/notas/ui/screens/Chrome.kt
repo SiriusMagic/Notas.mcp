@@ -59,7 +59,7 @@ fun tint(light: Boolean, enabled: Boolean = true) = when {
         options.forEachIndexed { i, label ->
             Text(
                 label,
-                Modifier.clip(CircleShape).background(if (i == selected) NotesColors.Raised else NotesColors.Card)
+                Modifier.clip(CircleShape).background(if (i == selected) (if (NotesColors.isLight) NotesColors.Chip else NotesColors.Raised) else NotesColors.Card)
                     .clickable { onSelect(i) }.padding(horizontal = 20.dp, vertical = 10.dp),
                 color = if (i == selected) NotesColors.Accent else NotesColors.Text,
                 fontSize = 17.sp, fontWeight = if (i == selected) FontWeight.SemiBold else FontWeight.Normal,

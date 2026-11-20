@@ -56,7 +56,7 @@ import com.zirakusa.notas.ui.theme.NotesColors
         Spacer(Modifier.height(20.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Pill(stringResource(R.string.cancel), NotesColors.Chip, NotesColors.Text, Modifier.weight(1f), onCancel)
-            Pill(stringResource(R.string.done), NotesColors.Accent, NotesColors.Background, Modifier.weight(1f)) { onDone(text) }
+            Pill(stringResource(R.string.done), NotesColors.Accent, NotesColors.OnAccent, Modifier.weight(1f)) { onDone(text) }
         }
     }
 }
