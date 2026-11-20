@@ -12,12 +12,15 @@ android {
         applicationId = "com.zirakusa.notas"
         minSdk = 26
         targetSdk = 36
-        versionCode = 2
-        versionName = "0.2.0"
+        versionCode = 3
+        versionName = "0.3.0"
         // ML Kit's on-device text recognition is native code: only 64-bit ARM phones (all recent ones), like Luma.
         ndk { abiFilters += "arm64-v8a" }
+        // Modo MCP: the same public relay as Stone, Luma and Calculadora (one device id per app). Empty = no MCP.
+        val relayUrl = (project.findProperty("notasRelayUrl") as String?).orEmpty().trimEnd('/')
+        buildConfigField("String", "RELAY_URL", "\"$relayUrl\"")
     }
-    buildFeatures { compose = true }
+    buildFeatures { compose = true; buildConfig = true }
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -59,6 +62,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.11.0")
     // Turns camera photos upright (EXIF), also on older phones.
     implementation("androidx.exifinterface:exifinterface:1.4.2")
+    // Modo MCP: WebSocket to the relay (same library and version as Stone, Luma and Calculadora).
+    implementation("com.squareup.okhttp3:okhttp:5.3.2")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.robolectric:robolectric:4.18")
     testImplementation("androidx.compose.ui:ui-test-junit4")

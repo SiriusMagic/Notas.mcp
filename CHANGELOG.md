@@ -1,3 +1,20 @@
+# Notas 0.3.0
+
+- **Ajustes** (abajo en el cajón) con el **Modo MCP**, igual que Stone, Luma y Calculadora: Activar MCP, Crear token
+  (LLM o Hub, solo lectura o lectura y escritura, caducidad), pausar, revocar y **Redireccionar a Hub** («Ir al Hub»).
+  También Política de privacidad y la versión.
+- Tu IA usa tus notas: `notes_list`, `notes_search`, `notes_get`, `notes_folders` y `tasks_list`; con un token de
+  escritura también `notes_create`, `notes_update` (o añadir al final), `notes_move`, `notes_pin`, `notes_delete` (a la
+  papelera, 30 días), `folders_create`, `tasks_create`, `tasks_complete` y `tasks_delete`.
+- Las notas **bloqueadas** y la papelera nunca salen por MCP (piden «no encontrado», igual que una nota que no existe).
+- Llega por el mismo relay que Stone (`…/mcp?token=not_…`); en el hub aparece como `notes_`. Tokens cifrados en el
+  Keystore del teléfono.
+- **Widgets** («Más › Añadir widget» en el cajón): Nota 4×2 y 2×2, Notas 4×2 y Tareas 2×3 (marca una tarea con el
+  círculo o añade una con +). Se actualizan solos cuando cambias algo, también si lo cambia la IA.
+- **Comentarios** abre la página de sugerencias del proyecto en el navegador.
+- Internet solo para el Modo MCP (apagado de fábrica).
+- 35 pruebas.
+
 # Notas 0.2.0
 
 Editor completo, como el de las notas del teléfono:

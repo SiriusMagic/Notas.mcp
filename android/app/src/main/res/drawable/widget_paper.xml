@@ -1,0 +1,5 @@
+<!-- Widget background: cream paper with round corners, like the phone's notes widgets. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="#EFE8DA" />
+    <corners android:radius="28dp" />
+</shape>

@@ -12,6 +12,7 @@ class TasksState(
     private val store: NoteStore,
     private val clock: () -> Long = System::currentTimeMillis,
     private val reminders: ReminderScheduler = object : ReminderScheduler {},
+    private val onChange: () -> Unit = {},
 ) {
     var tasks by mutableStateOf(store.tasks()); private set
     var editing by mutableStateOf<Task?>(null); private set
@@ -40,20 +41,25 @@ class TasksState(
             val id = store.saveTask(saved)
             if (remind != null && !saved.done) reminders.set(TASK, id, remind, clean) else reminders.cancel(TASK, id)
         }
-        tasks = store.tasks()
+        reload()
     }
 
     fun toggle(task: Task) {
         val next = task.copy(done = !task.done, updatedAt = clock())
         store.saveTask(next)
         if (next.done) reminders.cancel(TASK, task.id) else next.remindAt?.takeIf { it > clock() }?.let { reminders.set(TASK, task.id, it, task.text) }
-        tasks = store.tasks()
+        reload()
     }
 
-    fun delete(task: Task) { editing = null; reminders.cancel(TASK, task.id); store.deleteTask(task.id); tasks = store.tasks() }
+    fun delete(task: Task) { editing = null; reminders.cancel(TASK, task.id); store.deleteTask(task.id); reload() }
 
     /** Reminders still to come, to set again after the phone restarts. */
     fun upcomingReminders(): List<Task> = store.tasks().filter { !it.done && (it.remindAt ?: 0) > clock() }
+
+    private fun reload() { tasks = store.tasks(); onChange() }
+
+    /** Reads the tasks again (an AI or the widget changed them). */
+    fun refresh() { tasks = store.tasks() }
 
     companion object { const val TASK = "task" }
 }

@@ -1,0 +1,9 @@
+<!-- The ring / the + are separate views on purpose: each has its own tap. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingVertical="6dp" tools:ignore="UseCompoundDrawables">
+    <ImageView android:id="@+id/tick" android:layout_width="30dp" android:layout_height="30dp" android:padding="4dp"
+        android:src="@drawable/widget_circle" android:contentDescription="@string/task_done" />
+    <TextView android:id="@+id/text" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginStart="8dp" android:maxLines="1" android:ellipsize="end" android:textColor="#3A2A10" android:textSize="16sp" />
+</LinearLayout>

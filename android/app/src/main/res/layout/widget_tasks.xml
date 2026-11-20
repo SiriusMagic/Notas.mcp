@@ -1,0 +1,18 @@
+<!-- «Tareas» 2×3: open tasks with a ring to tick them, and + to add one. -->
+<!-- The ring / the + are separate views on purpose: each has its own tap. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:id="@+id/root"
+    android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical"
+    android:background="@drawable/widget_light" android:paddingHorizontal="16dp" android:paddingVertical="14dp">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal"
+        android:gravity="center_vertical" tools:ignore="UseCompoundDrawables">
+        <TextView android:id="@+id/header" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
+            android:text="@string/widget_tasks" android:textColor="#3A2A10" android:textSize="18sp" />
+        <ImageView android:id="@+id/add" android:layout_width="32dp" android:layout_height="32dp" android:padding="4dp"
+            android:src="@drawable/widget_plus" android:contentDescription="@string/new_task" />
+    </LinearLayout>
+    <LinearLayout android:id="@+id/rows" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:layout_marginTop="6dp" />
+    <TextView android:id="@+id/empty" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_marginTop="10dp" android:text="@string/widget_no_tasks" android:textColor="#8A847A" android:visibility="gone" />
+</LinearLayout>

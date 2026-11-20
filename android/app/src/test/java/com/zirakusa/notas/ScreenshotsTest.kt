@@ -17,6 +17,7 @@ import com.zirakusa.notas.data.Task
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.longClick
 import com.zirakusa.notas.ui.theme.NotesTheme
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -95,5 +96,33 @@ class ScreenshotsTest {
         compose.onNodeWithContentDescription("Dibujo").performClick()
         compose.onNodeWithContentDescription("Marcador").assertExists()
         onView(isRoot()).captureRoboImage("build/screenshots/notas-note-drawing.png")
+    }
+
+    @Test fun settingsMcpDrawerAndWidgets() {
+        val context = ApplicationProvider.getApplicationContext<android.content.Context>()
+        val store = SqlNoteStore(context)
+        store.save(Note(title = "Hh", body = "Cajetines\nSpray negro", createdAt = 1, updatedAt = 1_763_500_000_000))
+        store.save(Note(title = "Clave", body = "1234", locked = true, createdAt = 2, updatedAt = 1_763_600_000_000))
+        store.saveTask(Task(text = "Comprar cajetines", createdAt = 2, updatedAt = 2))
+        val state = NotesState(store)
+        compose.setContent { NotesTheme { NotesApp(state, TasksState(store)) } }
+        compose.onNodeWithContentDescription("Carpetas").performClick()
+        compose.onNodeWithText("Añadir widget").assertExists()
+        onView(isRoot()).captureRoboImage("build/screenshots/notas-drawer-more.png")
+        compose.onNodeWithText("Añadir widget").performClick()
+        compose.onNodeWithText("2×3").assertExists()
+        onView(isRoot()).captureRoboImage("build/screenshots/notas-widgets.png")
+        state.page = com.zirakusa.notas.ui.Page.SETTINGS
+        compose.onNodeWithText("Modo MCP").assertExists()
+        onView(isRoot()).captureRoboImage("build/screenshots/notas-settings.png")
+        compose.onNodeWithText("Modo MCP").performClick()
+        compose.onNodeWithText("Redireccionar a Hub").assertExists()
+        onView(isRoot()).captureRoboImage("build/screenshots/notas-mcp.png")
+
+        // The home-screen widgets draw the real notes (never the locked one) and the open tasks.
+        val note = com.zirakusa.notas.widget.Widgets.views(context, com.zirakusa.notas.widget.NoteWidget::class.java, store).apply(context, null)
+        assertEquals("Hh", note.findViewById<android.widget.TextView>(R.id.title).text.toString())
+        val tasks = com.zirakusa.notas.widget.Widgets.views(context, com.zirakusa.notas.widget.TasksWidget::class.java, store).apply(context, null)
+        assertEquals(1, tasks.findViewById<android.widget.LinearLayout>(R.id.rows).childCount)
     }
 }

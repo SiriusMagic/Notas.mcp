@@ -1,12 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <!-- Notes stay in the phone (notas.db and files/attachments) and are left out of backups. The ML Kit library asks for
-         Internet; it is removed, so nothing can leave the phone (text recognition runs on the phone). -->
-    <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />
+    <!-- Notes stay in the phone (notas.db and files/attachments) and are left out of backups. Internet is only for
+         Modo MCP (off by default), through the relay; text recognition runs on the phone. -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" tools:node="remove" />
     <!-- «Recordatorio»: a notification at the chosen time, set again after the phone restarts. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- «Redireccionar a Hub»: only apps signed with the same key (Gateway Hub) get this permission. -->
+    <permission android:name="com.zirakusa.gatewayhub.permission.LINK" android:protectionLevel="signature"
+        android:label="@string/hub_link_permission" />
 
     <queries>
         <!-- 🎤 dictation and the camera, offered by other apps. -->
@@ -28,12 +31,38 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <!-- Gateway Hub's scanner finds the notes (module notes_) and their link channel. Being found turns nothing on. -->
+            <intent-filter>
+                <action android:name="com.zirakusa.gatewayhub.action.APP" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <meta-data android:name="com.zirakusa.gatewayhub.module" android:value="notes_" />
+            <meta-data android:name="com.zirakusa.gatewayhub.link" android:value="${applicationId}.hublink" />
         </activity>
+        <provider android:name=".mcp.HubLinkProvider" android:authorities="${applicationId}.hublink"
+            android:exported="true" android:permission="com.zirakusa.gatewayhub.permission.LINK" />
         <!-- Camera photos are written here, and shared photos are read from here, only with a one-time grant. -->
         <provider android:name="androidx.core.content.FileProvider" android:authorities="${applicationId}.files"
             android:exported="false" android:grantUriPermissions="true">
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
         </provider>
+        <!-- Home-screen widgets (see widget/Widgets.kt). -->
+        <receiver android:name=".widget.NoteWidget" android:exported="false" android:label="@string/widget_note">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_info_note" />
+        </receiver>
+        <receiver android:name=".widget.NoteSmallWidget" android:exported="false" android:label="@string/widget_note">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_info_note_small" />
+        </receiver>
+        <receiver android:name=".widget.NotesListWidget" android:exported="false" android:label="@string/widget_notes">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_info_list" />
+        </receiver>
+        <receiver android:name=".widget.TasksWidget" android:exported="false" android:label="@string/widget_tasks">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_info_tasks" />
+        </receiver>
         <receiver android:name=".ReminderReceiver" android:exported="false" />
         <receiver android:name=".BootReceiver" android:exported="false">
             <intent-filter><action android:name="android.intent.action.BOOT_COMPLETED" /></intent-filter>

@@ -1,0 +1,6 @@
+<!-- targetCell*, previewLayout: Android 12+ use them; older launchers simply ignore them. -->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" tools:ignore="UnusedAttribute"
+    android:minWidth="110dp" android:minHeight="180dp" android:targetCellWidth="2" android:targetCellHeight="3"
+    android:initialLayout="@layout/widget_tasks" android:previewLayout="@layout/widget_tasks" android:resizeMode="horizontal|vertical"
+    android:updatePeriodMillis="0" android:widgetCategory="home_screen" android:description="@string/widget_tasks_desc" />

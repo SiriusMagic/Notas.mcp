@@ -13,6 +13,8 @@ import com.zirakusa.notas.data.Section
 
 enum class Tab { NOTES, TASKS }
 
+enum class Page { MAIN, SETTINGS, MCP, WIDGETS }
+
 /** Single owner of what the app shows. Screens only paint it and call these functions. */
 /** What the phone does with reminders (AlarmManager in the app, nothing in tests). */
 interface ReminderScheduler {
@@ -24,7 +26,11 @@ class NotesState(
     private val store: NoteStore,
     private val clock: () -> Long = System::currentTimeMillis,
     private val reminders: ReminderScheduler = object : ReminderScheduler {},
+    /** After any saved change (the home-screen widgets redraw). */
+    private val onChange: () -> Unit = {},
 ) {
+    /** Main list, Ajustes, Modo MCP or «Añadir widget». */
+    var page by mutableStateOf(Page.MAIN)
     var notes by mutableStateOf(emptyList<Note>()); private set
     var folders by mutableStateOf(emptyList<Folder>()); private set
     var section by mutableStateOf<Section>(Section.Uncategorized); private set
@@ -206,7 +212,10 @@ class NotesState(
         reload()
     }
 
-    private fun reload() { notes = store.notes(); folders = store.folders() }
+    private fun reload() { notes = store.notes(); folders = store.folders(); onChange() }
+
+    /** Reads everything again (an AI changed the notes through MCP). */
+    fun refresh() { notes = store.notes(); folders = store.folders() }
 
     companion object {
         private const val LAYOUT = "layout"

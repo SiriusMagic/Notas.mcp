@@ -17,11 +17,21 @@ import com.zirakusa.notas.R
 import com.zirakusa.notas.data.NotesRules
 import com.zirakusa.notas.data.Section
 import com.zirakusa.notas.ui.screens.EditorScreen
+import com.zirakusa.notas.ui.screens.DrawerLinks
 import com.zirakusa.notas.ui.screens.FolderDrawer
+import com.zirakusa.notas.ui.screens.McpScreen
+import com.zirakusa.notas.ui.screens.SettingsScreen
+import com.zirakusa.notas.ui.screens.WidgetKind
+import com.zirakusa.notas.ui.screens.WidgetsScreen
 import com.zirakusa.notas.ui.screens.InputDialog
 import com.zirakusa.notas.ui.screens.NotesScreen
 import com.zirakusa.notas.ui.theme.NotesColors
 import kotlinx.coroutines.launch
+
+/** What the app asks of the phone outside the editor (widgets, feedback page, clipboard, Gateway Hub). */
+class AppActions(
+    val pinWidget: (WidgetKind) -> Unit = {}, val feedback: () -> Unit = {}, val copy: (String) -> Unit = {}, val goToHub: () -> Unit = {},
+)
 
 /**
  * Drawer + list, or the editor, and the folder dialogs. [askUnlock] runs the phone's lock and calls its
@@ -31,7 +41,15 @@ import kotlinx.coroutines.launch
     state: NotesState, tasks: TasksState, askUnlock: (() -> Unit) -> Unit = {}, now: () -> Long = System::currentTimeMillis,
     platform: @Composable (Editing) -> EditorPlatform = { remember { object : EditorPlatform {} } },
     allowNotifications: () -> Unit = {},
+    actions: AppActions = AppActions(),
 ) {
+    when (state.page) {
+        Page.MAIN -> Unit
+        Page.SETTINGS -> return SettingsScreen(onMcp = { state.page = Page.MCP }) { state.page = Page.MAIN }
+        Page.MCP -> return McpScreen(actions.copy, actions.goToHub) { state.page = Page.SETTINGS }
+        Page.WIDGETS -> return WidgetsScreen(NotesRules.visible(state.notes, Section.All), tasks.tasks,
+            { NotesRules.shortDate(it.updatedAt, now()) }, actions.pinWidget) { state.page = Page.MAIN }
+    }
     val e = state.editing
     if (e != null) {
         EditorScreen(state, e, platform(e), now())
@@ -50,7 +68,11 @@ import kotlinx.coroutines.launch
             FolderDrawer(state, { s ->
                 state.tab = Tab.NOTES
                 if (state.pick(s)) scope.launch { drawer.close() } else askUnlock { state.unlock(); scope.launch { drawer.close() } }
-            }, { naming = true }, { deleting = it })
+            }, { naming = true }, { deleting = it }, DrawerLinks(
+                widgets = { state.page = Page.WIDGETS; scope.launch { drawer.close() } },
+                feedback = actions.feedback,
+                settings = { state.page = Page.SETTINGS; scope.launch { drawer.close() } },
+            ))
         },
         drawerState = drawer,
     ) {

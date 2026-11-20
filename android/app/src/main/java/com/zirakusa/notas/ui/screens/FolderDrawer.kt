@@ -9,6 +9,9 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,7 +22,10 @@ import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.outlined.Inbox
+import androidx.compose.material.icons.outlined.HeadsetMic
 import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -37,12 +43,19 @@ import com.zirakusa.notas.data.Section
 import com.zirakusa.notas.ui.NotesState
 import com.zirakusa.notas.ui.theme.NotesColors
 
-/** Side panel «Carpetas»: fixed folders, the user's folders (long press = delete) and «Nuevo». */
-@Composable fun FolderDrawer(state: NotesState, onPick: (Section) -> Unit, onNewFolder: () -> Unit, onDeleteFolder: (Long) -> Unit) =
+/** What the bottom of the side panel opens. */
+class DrawerLinks(val widgets: () -> Unit, val feedback: () -> Unit, val settings: () -> Unit)
+
+/**
+ * Side panel «Carpetas»: fixed folders, the user's folders (long press = delete) and «Nuevo»; «Más › Añadir widget»;
+ * and Comentarios / Ajustes at the bottom.
+ */
+@Composable fun FolderDrawer(state: NotesState, onPick: (Section) -> Unit, onNewFolder: () -> Unit, onDeleteFolder: (Long) -> Unit, links: DrawerLinks) =
     Column(
         Modifier.fillMaxHeight().width(320.dp).clip(RoundedCornerShape(topEnd = 28.dp, bottomEnd = 28.dp))
-            .background(NotesColors.Raised).statusBarsPadding().verticalScroll(rememberScrollState()).padding(16.dp),
+            .background(NotesColors.Raised).statusBarsPadding().navigationBarsPadding().padding(16.dp),
     ) {
+      Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(start = 8.dp)) {
             Text(stringResource(R.string.folders), color = NotesColors.Muted, fontSize = 16.sp)
             Spacer(Modifier.weight(1f))
@@ -60,6 +73,25 @@ import com.zirakusa.notas.ui.theme.NotesColors
             FolderRow(Icons.Outlined.Folder, f.name, state.count(s), state.section == s, onLongClick = { onDeleteFolder(f.id) }) { onPick(s) }
         }
         fixed.drop(2).forEach { (s, icon, label) -> FolderRow(icon, stringResource(label), state.count(s), state.section == s) { onPick(s) } }
+        HorizontalDivider(Modifier.padding(horizontal = 8.dp, vertical = 12.dp), color = NotesColors.Chip)
+        Text(stringResource(R.string.more_section), color = NotesColors.Muted, fontSize = 16.sp, modifier = Modifier.padding(start = 8.dp, bottom = 4.dp))
+        Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).clickable(onClick = links.widgets).padding(horizontal = 8.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(R.string.add_widget), Modifier.weight(1f), fontSize = 18.sp)
+            Icon(Icons.AutoMirrored.Outlined.KeyboardArrowRight, null, tint = NotesColors.Muted)
+        }
+      }
+        Row(Modifier.fillMaxWidth().padding(top = 8.dp)) {
+            Bottom(Icons.Outlined.HeadsetMic, stringResource(R.string.feedback), links.feedback)
+            Bottom(Icons.Outlined.Settings, stringResource(R.string.settings), links.settings)
+        }
+    }
+
+@Composable private fun androidx.compose.foundation.layout.RowScope.Bottom(icon: ImageVector, label: String, onClick: () -> Unit) =
+    Column(Modifier.weight(1f).clip(RoundedCornerShape(16.dp)).clickable(onClick = onClick).padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally) {
+        Icon(icon, null, Modifier.size(30.dp), tint = NotesColors.Muted)
+        Text(label, color = NotesColors.Muted, fontSize = 15.sp, modifier = Modifier.padding(top = 6.dp))
     }
 
 @Composable private fun FolderRow(icon: ImageVector, name: String, count: Int, selected: Boolean, onLongClick: (() -> Unit)? = null, onClick: () -> Unit) =

@@ -1,0 +1,14 @@
+<!-- «Nota» 4×2: the newest (or pinned) note on paper. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/root"
+    android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical"
+    android:background="@drawable/widget_paper" android:padding="20dp">
+    <ImageView android:layout_width="28dp" android:layout_height="28dp" android:src="@drawable/widget_icon"
+        android:importantForAccessibility="no" />
+    <TextView android:id="@+id/title" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="10dp" android:maxLines="1" android:ellipsize="end" android:textColor="#111111"
+        android:textSize="22sp" android:textStyle="bold" />
+    <TextView android:id="@+id/preview" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+        android:layout_marginTop="4dp" android:maxLines="2" android:ellipsize="end" android:textColor="#8A847A" android:textSize="15sp" />
+    <TextView android:id="@+id/date" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:textColor="#8A847A" android:textSize="13sp" />
+</LinearLayout>
