@@ -3,7 +3,7 @@
 Bloc de notas Android con el aspecto de las notas del teléfono. La meta del proyecto es que una IA (Claude,
 ChatGPT…) pueda **leer y escribir tus notas y tareas** por MCP, igual que Stone, Luma y Calculadora.
 
-## Estado (0.4.0)
+## Estado (0.5.0)
 
 - Notas con título y texto, deshacer/rehacer, vistas de lista, tarjeta y cuadrícula, y búsqueda.
 - Editor con formato (H1–H4, negrita, cursiva, subrayado, tachado, listas, casillas, tablas), fotos, reconocimiento de
@@ -17,7 +17,7 @@ ChatGPT…) pueda **leer y escribir tus notas y tareas** por MCP, igual que Ston
 - Tema global (Sistema, Claro, Oscuro y color de acento), aparte del fondo de cada nota.
 - Internet solo para el Modo MCP (apagado de fábrica); sin anuncios ni copias en la nube.
 
-APK: [`android/Notas-0.4.0.apk`](android/Notas-0.4.0.apk) (`com.zirakusa.notas`, firmado como Stone y Gateway Hub).
+APK: [`android/Notas-0.5.0.apk`](android/Notas-0.5.0.apk) (`com.zirakusa.notas`, firmado como Stone y Gateway Hub).
 
 ## Compilar y probar
 
@@ -28,4 +28,4 @@ cd android
 
 ## Siguiente
 
-Ver [`ROADMAP.md`](ROADMAP.md): pulido del editor (0.5.0) y Notas de IA (0.6.0).
+Ver [`ROADMAP.md`](ROADMAP.md): pulido del editor y Notas de IA.

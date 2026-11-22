@@ -1,3 +1,10 @@
+# Notas 0.5.0
+
+- **Resumen para Inicio**: la tarjeta «Notas y tareas» de la pantalla «Hoy» de Inicio muestra las tareas pendientes
+  («☐ Comprar pan») y las últimas notas (hasta 5); si no hay nada, «No tienes pendientes». Nunca incluye notas
+  bloqueadas ni la papelera. Solo apps firmadas por el mismo desarrollador pueden leerlo (`SummaryProvider`).
+- 38 pruebas.
+
 # Notas 0.4.0
 
 - **Ajustes › Tema**, para toda la app: **Sistema**, **Claro** u **Oscuro**, y **Color de acento** (amarillo, naranja,

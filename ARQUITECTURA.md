@@ -14,6 +14,7 @@ Carpeta = package (`android/app/src/main/java/com/zirakusa/notas/`):
 | `mcp/` | Modo MCP, como Calculadora y Luma: `Tokens` (LLM/Hub/Redirect, cifrados con `SecretBox`), `NotesTools` (las herramientas `notes_*` y `tasks_*`; nunca ven notas bloqueadas ni la papelera), `McpHandler` (JSON-RPC, tokens, límites), `RelayLink` (relay de Stone), `McpMode` (estado e interruptores; `StoreData` avisa de cada cambio) y `HubLink` (enlace para Gateway Hub con firma). |
 | `widget/` | `Widgets`: Nota 4×2 y 2×2, Notas 4×2 y Tareas 2×3 (RemoteViews; se redibujan con cada cambio). |
 | `LockGate.kt` | Pide el bloqueo del teléfono (BiometricPrompt) antes de abrir «Bloqueado», como la Bóveda de Luma. |
+| `Summary.kt` | `SummaryLines` (pura, con prueba) y `SummaryProvider`: la tarjeta de Notas en «Hoy» de Inicio (tareas pendientes y últimas notas; nunca bloqueadas ni papelera), solo para apps con la misma firma. |
 | `MainActivity.kt` | Crea el almacén y el estado, arranca el Modo MCP, abre notas desde accesos directos, recordatorios y widgets; al salir guarda la nota abierta y vuelve a bloquear. |
 
 Reglas:
