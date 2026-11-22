@@ -8,6 +8,9 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <!-- «Redireccionar a Hub»: only apps signed with the same key (Gateway Hub) get this permission. -->
+    <!-- The family summary (Notas' card in Inicio): only apps signed with the same key may read it. -->
+    <permission android:name="com.zirakusa.family.permission.SUMMARY" android:protectionLevel="signature"
+        android:label="@string/summary_permission" />
     <permission android:name="com.zirakusa.gatewayhub.permission.LINK" android:protectionLevel="signature"
         android:label="@string/hub_link_permission" />
 
@@ -38,7 +41,10 @@
             </intent-filter>
             <meta-data android:name="com.zirakusa.gatewayhub.module" android:value="notes_" />
             <meta-data android:name="com.zirakusa.gatewayhub.link" android:value="${applicationId}.hublink" />
+            <meta-data android:name="com.zirakusa.family.summary" android:value="${applicationId}.summary" />
         </activity>
+        <provider android:name=".SummaryProvider" android:authorities="${applicationId}.summary"
+            android:exported="true" android:permission="com.zirakusa.family.permission.SUMMARY" />
         <provider android:name=".mcp.HubLinkProvider" android:authorities="${applicationId}.hublink"
             android:exported="true" android:permission="com.zirakusa.gatewayhub.permission.LINK" />
         <!-- Camera photos are written here, and shared photos are read from here, only with a one-time grant. -->

@@ -167,4 +167,7 @@
     <string name="accent_purple">Purple</string>
     <string name="accent_blue">Blue</string>
     <string name="accent_green">Green</string>
+    <string name="summary_title">Notes and tasks</string>
+    <string name="summary_empty">Nothing pending</string>
+    <string name="summary_permission">Summary for Inicio</string>
 </resources>
