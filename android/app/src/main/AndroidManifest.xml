@@ -11,6 +11,9 @@
     <!-- The family summary (Notas' card in Inicio): only apps signed with the same key may read it. -->
     <permission android:name="com.zirakusa.family.permission.SUMMARY" android:protectionLevel="signature"
         android:label="@string/summary_permission" />
+    <!-- Orders between family apps (FAMILIA.md §10): here, Lucía (Gateway Hub) leaving a count as a new note. -->
+    <permission android:name="com.zirakusa.family.permission.ACT" android:protectionLevel="signature"
+        android:label="@string/act_permission" />
     <permission android:name="com.zirakusa.gatewayhub.permission.LINK" android:protectionLevel="signature"
         android:label="@string/hub_link_permission" />
 
@@ -45,6 +48,8 @@
         </activity>
         <provider android:name=".SummaryProvider" android:authorities="${applicationId}.summary"
             android:exported="true" android:permission="com.zirakusa.family.permission.SUMMARY" />
+        <provider android:name=".InboxProvider" android:authorities="${applicationId}.inbox"
+            android:exported="true" android:permission="com.zirakusa.family.permission.ACT" />
         <provider android:name=".mcp.HubLinkProvider" android:authorities="${applicationId}.hublink"
             android:exported="true" android:permission="com.zirakusa.gatewayhub.permission.LINK" />
         <!-- Camera photos are written here, and shared photos are read from here, only with a one-time grant. -->

@@ -170,4 +170,5 @@
     <string name="summary_title">Notas y tareas</string>
     <string name="summary_empty">No tienes pendientes</string>
     <string name="summary_permission">Resumen para Inicio</string>
+    <string name="act_permission">Órdenes entre apps de la familia</string>
 </resources>

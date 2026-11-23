@@ -17,7 +17,7 @@ ChatGPT…) pueda **leer y escribir tus notas y tareas** por MCP, igual que Ston
 - Tema global (Sistema, Claro, Oscuro y color de acento), aparte del fondo de cada nota.
 - Internet solo para el Modo MCP (apagado de fábrica); sin anuncios ni copias en la nube.
 
-APK: [`android/Notas-0.5.0.apk`](android/Notas-0.5.0.apk) (`com.zirakusa.notas`, firmado como Stone y Gateway Hub).
+APK: [`android/Notas-0.6.0.apk`](android/Notas-0.6.0.apk) (`com.zirakusa.notas`, firmado como Stone y Gateway Hub).
 
 ## Compilar y probar
 

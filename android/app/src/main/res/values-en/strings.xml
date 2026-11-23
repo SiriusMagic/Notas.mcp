@@ -170,4 +170,5 @@
     <string name="summary_title">Notes and tasks</string>
     <string name="summary_empty">Nothing pending</string>
     <string name="summary_permission">Summary for Inicio</string>
+    <string name="act_permission">Orders between family apps</string>
 </resources>

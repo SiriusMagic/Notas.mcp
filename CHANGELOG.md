@@ -1,3 +1,11 @@
+# Notas 0.6.0
+
+- **Conteos de Lucía**: cuando cuentas en voz alta con Lucía (Gateway Hub) y dices «termina», el conteo llega como una
+  nota nueva en la carpeta **Conteos** (se crea sola), con una tabla «Punto | Cantidad» y el total.
+- Solo apps firmadas por el mismo desarrollador pueden dejar notas así (`InboxProvider`, permiso
+  `com.zirakusa.family.permission.ACT`), y solo pueden **añadir**: nunca leer, cambiar ni borrar tus notas.
+- Si Notas está abierta, la lista se actualiza sola.
+
 # Notas 0.5.0
 
 - **Resumen para Inicio**: la tarjeta «Notas y tareas» de la pantalla «Hoy» de Inicio muestra las tareas pendientes
