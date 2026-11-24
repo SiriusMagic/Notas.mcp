@@ -1,5 +1,7 @@
 package com.zirakusa.notas.ui.screens
 
+import com.zirakusa.notas.IconCard
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -85,6 +87,7 @@ import androidx.compose.ui.semantics.semantics
             }
             Item(stringResource(R.string.mcp_title), "$status · ${stringResource(R.string.mcp_settings_hint)}", onMcp)
         }
+        IconCard(NotesColors.Card, NotesColors.Text, NotesColors.Muted, NotesColors.Accent, androidx.compose.ui.graphics.Color(0xFF111015))
         Group {
             Item(stringResource(R.string.privacy), null) { privacy = true }
             HorizontalDivider(color = NotesColors.Chip)

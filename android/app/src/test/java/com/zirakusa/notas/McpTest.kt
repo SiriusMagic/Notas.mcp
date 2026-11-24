@@ -120,5 +120,25 @@ class McpTest {
         assertEquals(404, handler.handle("POST", "/other", emptyMap(), emptyMap(), "{}").status)
         assertEquals("NOT_SAME_DEVELOPER", HubLink.answer(false).getString("error"))
         assertEquals("REDIRECT_OFF", HubLink.answer(true).getString("error"))
+        // «Conectar todas» and Lucía's tools: only for the same developer, and tools only with «Redireccionar a Hub» on.
+        assertEquals("NOT_SAME_DEVELOPER", HubLink.connect(false).getString("error"))
+        assertEquals("NOT_SAME_DEVELOPER", HubLink.tool(false, "{}").getString("error"))
+        assertEquals("REDIRECT_OFF", HubLink.tool(true, "{}").getString("error"))
+    }
+
+    /** Lucía runs a tool on the phone through the same handler, only while «Redireccionar a Hub» is on. */
+    @Test fun luciaRunsToolsOnThePhone() {
+        val relay = com.zirakusa.notas.mcp.McpMode.relayUrl
+        com.zirakusa.notas.mcp.McpMode.relayUrl = ""                                             // no relay in tests
+        com.zirakusa.notas.mcp.McpMode.load(org.robolectric.RuntimeEnvironment.getApplication())
+        com.zirakusa.notas.mcp.McpMode.redirect(false)
+        assertEquals(null, com.zirakusa.notas.mcp.McpMode.local("{}"))
+        HubLink.connect(true); assertTrue(com.zirakusa.notas.mcp.McpMode.hubRedirect)                // «Conectar todas»
+        val list = JSONObject(com.zirakusa.notas.mcp.McpMode.local("""{"jsonrpc":"2.0","id":1,"method":"tools/list"}""")!!)
+        assertTrue(list.getJSONObject("result").getJSONArray("tools").length() > 0)
+        val viaProvider = JSONObject(HubLink.tool(true, """{"jsonrpc":"2.0","id":2,"method":"tools/list"}""").getString("response"))
+        assertEquals(2, viaProvider.getInt("id"))
+        com.zirakusa.notas.mcp.McpMode.redirect(false)
+        com.zirakusa.notas.mcp.McpMode.relayUrl = relay                                          // as the other tests expect
     }
 }

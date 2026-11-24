@@ -171,4 +171,11 @@
     <string name="summary_empty">No tienes pendientes</string>
     <string name="summary_permission">Resumen para Inicio</string>
     <string name="act_permission">Órdenes entre apps de la familia</string>
+    <string name="icon_title">Icono de la app</string>
+    <string name="icon_original">Original</string>
+    <string name="icon_light">Claro</string>
+    <string name="icon_gold">Dorado</string>
+    <string name="icon_blue">Azul</string>
+    <string name="icon_green">Verde</string>
+    <string name="icon_hint">Cambia el icono de la pantalla de inicio. Algunos lanzadores tardan unos segundos en mostrarlo.</string>
 </resources>

@@ -42,6 +42,7 @@ class MainActivity : FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AppIcon.load(this)
         enableEdgeToEdge()
         val store = SqlNoteStore(this)
         val alarms = AlarmReminders(this)
