@@ -15,7 +15,7 @@ import com.zirakusa.notas.ui.theme.ThemeMode
 
 enum class Tab { NOTES, TASKS }
 
-enum class Page { MAIN, SETTINGS, MCP, WIDGETS }
+enum class Page { MAIN, SETTINGS, WIDGETS }
 
 /** Single owner of what the app shows. Screens only paint it and call these functions. */
 /** What the phone does with reminders (AlarmManager in the app, nothing in tests). */

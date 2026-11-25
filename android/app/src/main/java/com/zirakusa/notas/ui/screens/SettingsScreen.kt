@@ -79,8 +79,7 @@ import androidx.compose.ui.semantics.semantics
         }
         Group {
             val status = when {
-                !McpMode.active -> stringResource(R.string.mcp_status_off)
-                McpMode.hubRedirect -> stringResource(R.string.mcp_redirect)
+                !McpMode.remote -> stringResource(R.string.mcp_status_off)
                 McpMode.state == RelayLink.State.ONLINE -> stringResource(R.string.mcp_online)
                 McpMode.state == RelayLink.State.CONNECTING -> stringResource(R.string.mcp_connecting)
                 else -> stringResource(R.string.mcp_offline)

@@ -6,7 +6,6 @@ import com.zirakusa.notas.data.SqlNoteStore
 import com.zirakusa.notas.data.Task
 import com.zirakusa.notas.mcp.Access
 import com.zirakusa.notas.mcp.HubLink
-import com.zirakusa.notas.mcp.Kind
 import com.zirakusa.notas.mcp.McpHandler
 import com.zirakusa.notas.mcp.StoreData
 import com.zirakusa.notas.mcp.Token
@@ -25,10 +24,9 @@ class McpTest {
     private val store = SqlNoteStore(ApplicationProvider.getApplicationContext(), null)
     private var changes = 0
     private val data = StoreData(store) { changes++ }
-    private val reader = Token("r", "Claude", "not_" + "r".repeat(40), Access.READ, Kind.HUB, "Compras")
-    private val writer = Token("w", "ChatGPT", "not_" + "w".repeat(40), Access.WRITE)
-    private val paused = Token("p", "Viejo", "not_" + "p".repeat(40), Access.WRITE, paused = true)
-    private val handler = McpHandler({ listOf(reader, writer, paused) }, data, "0.3.0")
+    private val reader = Token("not_" + "r".repeat(40), Access.READ)
+    private val writer = Token("not_" + "w".repeat(40), Access.WRITE)
+    private val handler = McpHandler({ listOf(reader, writer) }, data, "0.3.0")
 
     private val folder = store.addFolder("Obra")
     private val hh = store.save(Note(title = "Hh", body = "Cajetines\nSpray **negro**", folderId = folder, createdAt = 1, updatedAt = 10))
@@ -54,7 +52,7 @@ class McpTest {
         assertTrue(write.contains("notes_create")); assertTrue(write.contains("tasks_delete"))
         val init = rpc(reader, "initialize")
         assertEquals("notas", init.getJSONObject("serverInfo").getString("name"))
-        assertEquals("hub", init.getJSONObject("_meta").getJSONObject(McpHandler.TOKEN_META).getString("kind"))
+        assertEquals("redirect", init.getJSONObject("_meta").getJSONObject(McpHandler.TOKEN_META).getString("kind"))
     }
 
     @Test fun readListSearchAndGet() {
@@ -115,30 +113,40 @@ class McpTest {
     }
 
     @Test fun tokensAndHubLink() = runBlocking {
-        assertEquals(401, handler.handle("POST", "/mcp", mapOf("Authorization" to "Bearer ${paused.secret}"), emptyMap(), "{}").status)
+        assertEquals(401, handler.handle("POST", "/mcp", mapOf("Authorization" to "Bearer wrong_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"), emptyMap(), "{}").status)
         assertEquals(401, handler.handle("POST", "/mcp", emptyMap(), emptyMap(), "{}").status)
         assertEquals(404, handler.handle("POST", "/other", emptyMap(), emptyMap(), "{}").status)
         assertEquals("NOT_SAME_DEVELOPER", HubLink.answer(false).getString("error"))
         assertEquals("REDIRECT_OFF", HubLink.answer(true).getString("error"))
-        // «Conectar todas» and Lucía's tools: only for the same developer, and tools only with «Redireccionar a Hub» on.
         assertEquals("NOT_SAME_DEVELOPER", HubLink.connect(false).getString("error"))
         assertEquals("NOT_SAME_DEVELOPER", HubLink.tool(false, "{}").getString("error"))
-        assertEquals("REDIRECT_OFF", HubLink.tool(true, "{}").getString("error"))
+        // Only the same developer (Arka) may connect, disconnect, read the status or run a tool.
+        listOf(HubLink.disconnect(false), HubLink.status(false)).forEach { assertEquals("NOT_SAME_DEVELOPER", it.getString("error")) }
     }
 
-    /** Lucía runs a tool on the phone through the same handler, only while «Redireccionar a Hub» is on. */
+    /** Lucía runs a tool on the phone through the same handler, with or without the public link; Arka turns that on and off. */
     @Test fun luciaRunsToolsOnThePhone() {
         val relay = com.zirakusa.notas.mcp.McpMode.relayUrl
         com.zirakusa.notas.mcp.McpMode.relayUrl = ""                                             // no relay in tests
         com.zirakusa.notas.mcp.McpMode.load(org.robolectric.RuntimeEnvironment.getApplication())
-        com.zirakusa.notas.mcp.McpMode.redirect(false)
-        assertEquals(null, com.zirakusa.notas.mcp.McpMode.local("{}"))
-        HubLink.connect(true); assertTrue(com.zirakusa.notas.mcp.McpMode.hubRedirect)                // «Conectar todas»
+        com.zirakusa.notas.mcp.McpMode.turnRemote(false)
         val list = JSONObject(com.zirakusa.notas.mcp.McpMode.local("""{"jsonrpc":"2.0","id":1,"method":"tools/list"}""")!!)
         assertTrue(list.getJSONObject("result").getJSONArray("tools").length() > 0)
         val viaProvider = JSONObject(HubLink.tool(true, """{"jsonrpc":"2.0","id":2,"method":"tools/list"}""").getString("response"))
         assertEquals(2, viaProvider.getInt("id"))
-        com.zirakusa.notas.mcp.McpMode.redirect(false)
+        assertEquals("BAD_REQUEST", HubLink.tool(true, "").getString("error"))
+        assertEquals("NOT_SAME_DEVELOPER", HubLink.tool(false, "{}").getString("error"))
+        assertTrue(HubLink.status(true).containsKey("remote"))
+        HubLink.connect(true); assertTrue(com.zirakusa.notas.mcp.McpMode.remote)                 // Arka › «Activar MCP»
+        assertFalse(HubLink.disconnect(true).getBoolean("remote")); assertFalse(com.zirakusa.notas.mcp.McpMode.remote)
         com.zirakusa.notas.mcp.McpMode.relayUrl = relay                                          // as the other tests expect
+    }
+
+    /** The hub's token from before Arka took over is kept, so the hub's link keeps working. */
+    @Test fun theOldHubTokenIsKept() {
+        val old = """[{"id":"a","secret":"${"l".repeat(44)}","kind":"llm"},{"id":"b","secret":"${"h".repeat(44)}","kind":"redirect"}]"""
+        assertEquals("h".repeat(44), com.zirakusa.notas.mcp.Legacy.redirectSecret(old))
+        assertEquals(null, com.zirakusa.notas.mcp.Legacy.redirectSecret("[]"))
+        assertEquals(null, com.zirakusa.notas.mcp.Legacy.redirectSecret(""))
     }
 }

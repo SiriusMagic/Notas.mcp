@@ -2,8 +2,6 @@ package com.zirakusa.notas
 
 import android.Manifest
 import android.content.ActivityNotFoundException
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Intent
 import android.widget.Toast
 import androidx.compose.runtime.SideEffect
@@ -65,13 +63,12 @@ class MainActivity : FragmentActivity() {
                     when {
                         state.editing != null -> state.closeEditor()
                         state.selecting -> state.clearSelection()
-                        state.page == Page.MCP -> state.page = Page.SETTINGS
                         else -> state.page = Page.MAIN
                     }
                 }
                 NotesApp(state, tasks, askUnlock = { onOpen -> LockGate.ask(this, onOpen) }, platform = { rememberPlatform(state, it) },
                     allowNotifications = { if (Build.VERSION.SDK_INT >= 33) notifications.launch(Manifest.permission.POST_NOTIFICATIONS) },
-                    actions = AppActions(pinWidget = ::pinWidget, feedback = ::feedback, copy = ::copy, goToHub = ::goToHub))
+                    actions = AppActions(pinWidget = ::pinWidget, feedback = ::feedback, openArka = ::openArka))
             }
         }
     }
@@ -113,16 +110,10 @@ class MainActivity : FragmentActivity() {
         try { startActivity(Intent(Intent.ACTION_VIEW, FEEDBACK_URL.toUri())) } catch (_: ActivityNotFoundException) { }
     }
 
-    private fun copy(link: String) {
-        getSystemService(ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText("Notas MCP", link))
-        Toast.makeText(this, R.string.copied, Toast.LENGTH_SHORT).show()
-    }
-
-    /** «Ir al Hub»: copies the hub's link (in case it must be pasted) and opens the Gateway Hub app. */
-    private fun goToHub() {
-        getSystemService(ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText("Notas › Gateway Hub", McpMode.hubLink()))
+    /** «Modo MCP» in Ajustes: it is turned on, allowed on the phone and given tokens in Arka, so this opens Arka. */
+    private fun openArka() {
         val open = packageManager.getLaunchIntentForPackage("com.zirakusa.gatewayhub")
-        if (open != null) startActivity(open) else Toast.makeText(this, R.string.mcp_paste_in_hub, Toast.LENGTH_LONG).show()
+        if (open != null) startActivity(open) else Toast.makeText(this, R.string.mcp_no_arka, Toast.LENGTH_LONG).show()
     }
 
     companion object {

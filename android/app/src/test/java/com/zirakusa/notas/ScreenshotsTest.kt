@@ -115,9 +115,7 @@ class ScreenshotsTest {
         state.page = com.zirakusa.notas.ui.Page.SETTINGS
         compose.onNodeWithText("Modo MCP").assertExists()
         onView(isRoot()).captureRoboImage("build/screenshots/notas-settings.png")
-        compose.onNodeWithText("Modo MCP").performClick()
-        compose.onNodeWithText("Redireccionar a Hub").assertExists()
-        onView(isRoot()).captureRoboImage("build/screenshots/notas-mcp.png")
+        compose.onNodeWithText("Lo controla Arka", substring = true).assertExists()
 
         // The home-screen widgets draw the real notes (never the locked one) and the open tasks.
         val note = com.zirakusa.notas.widget.Widgets.views(context, com.zirakusa.notas.widget.NoteWidget::class.java, store).apply(context, null)

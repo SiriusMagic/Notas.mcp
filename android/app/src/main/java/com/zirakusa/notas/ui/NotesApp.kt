@@ -19,7 +19,6 @@ import com.zirakusa.notas.data.Section
 import com.zirakusa.notas.ui.screens.EditorScreen
 import com.zirakusa.notas.ui.screens.DrawerLinks
 import com.zirakusa.notas.ui.screens.FolderDrawer
-import com.zirakusa.notas.ui.screens.McpScreen
 import com.zirakusa.notas.ui.screens.SettingsScreen
 import com.zirakusa.notas.ui.screens.WidgetKind
 import com.zirakusa.notas.ui.screens.WidgetsScreen
@@ -30,7 +29,7 @@ import kotlinx.coroutines.launch
 
 /** What the app asks of the phone outside the editor (widgets, feedback page, clipboard, Gateway Hub). */
 class AppActions(
-    val pinWidget: (WidgetKind) -> Unit = {}, val feedback: () -> Unit = {}, val copy: (String) -> Unit = {}, val goToHub: () -> Unit = {},
+    val pinWidget: (WidgetKind) -> Unit = {}, val feedback: () -> Unit = {}, val openArka: () -> Unit = {},
 )
 
 /**
@@ -46,8 +45,7 @@ class AppActions(
     when (state.page) {
         Page.MAIN -> Unit
         Page.SETTINGS -> return SettingsScreen(state.themeMode, state.accent, state::changeTheme, state::changeAccent,
-            onMcp = { state.page = Page.MCP }) { state.page = Page.MAIN }
-        Page.MCP -> return McpScreen(actions.copy, actions.goToHub) { state.page = Page.SETTINGS }
+            onMcp = actions.openArka) { state.page = Page.MAIN }
         Page.WIDGETS -> return WidgetsScreen(NotesRules.visible(state.notes, Section.All), tasks.tasks,
             { NotesRules.shortDate(it.updatedAt, now()) }, actions.pinWidget) { state.page = Page.MAIN }
     }
