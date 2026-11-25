@@ -50,7 +50,7 @@ class ReminderReceiver : BroadcastReceiver() {
             .putExtra(if (kind == NotesState.NOTE) MainActivity.EXTRA_NOTE else MainActivity.EXTRA_TASKS, id)
         val code = AlarmReminders.requestCode(kind, id)
         val notification = NotificationCompat.Builder(context, AlarmReminders.CHANNEL)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(context.getString(if (kind == NotesState.NOTE) R.string.reminder_note else R.string.reminder_task))
             .setContentText(intent.getStringExtra(AlarmReminders.EXTRA_TEXT).orEmpty())
             .setAutoCancel(true)

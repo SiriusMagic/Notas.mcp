@@ -1,3 +1,9 @@
+# Notas 0.7.0
+
+- **Iconos nuevos**: cinco libretas, **Cuaderno** (el de fábrica), Lápiz, Cristal, Adhesivas y Libreta, en Ajustes › Icono
+  de la app. Se quitan los anteriores (Original, Claro, Dorado, Azul y Verde); si tenías uno elegido, pasa solo al nuevo
+  que ocupa su lugar. Los recordatorios siguen con su icono de siempre en la barra de notificaciones.
+
 # Notas 0.6.1
 
 - **Conectar todas** (Gateway Hub 0.0.21): con un toque en el Hub se activa aquí «Redireccionar a Hub» y la app queda

@@ -172,10 +172,10 @@
     <string name="summary_permission">Summary for Inicio</string>
     <string name="act_permission">Orders between family apps</string>
     <string name="icon_title">App icon</string>
-    <string name="icon_original">Original</string>
-    <string name="icon_light">Light</string>
-    <string name="icon_gold">Gold</string>
-    <string name="icon_blue">Blue</string>
-    <string name="icon_green">Green</string>
+    <string name="icon_notebook">Notebook</string>
+    <string name="icon_pencil">Pencil</string>
+    <string name="icon_glass">Glass</string>
+    <string name="icon_sticky">Sticky</string>
+    <string name="icon_notepad">Notepad</string>
     <string name="icon_hint">Changes the home-screen icon. Some launchers take a few seconds to show it.</string>
 </resources>

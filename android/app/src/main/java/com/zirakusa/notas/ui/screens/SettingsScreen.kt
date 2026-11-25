@@ -87,7 +87,7 @@ import androidx.compose.ui.semantics.semantics
             }
             Item(stringResource(R.string.mcp_title), "$status · ${stringResource(R.string.mcp_settings_hint)}", onMcp)
         }
-        IconCard(NotesColors.Card, NotesColors.Text, NotesColors.Muted, NotesColors.Accent, androidx.compose.ui.graphics.Color(0xFF111015))
+        IconCard(NotesColors.Card, NotesColors.Text, NotesColors.Muted, NotesColors.Accent)
         Group {
             Item(stringResource(R.string.privacy), null) { privacy = true }
             HorizontalDivider(color = NotesColors.Chip)
