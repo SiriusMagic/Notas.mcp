@@ -100,7 +100,6 @@
     <string name="add_reminder">Añadir un recordatorio.</string>
     <string name="compressed">Imágenes comprimidas: %1$d KB menos.</string>
     <string name="close">Cerrar</string>
-    <string name="copied">Copiado</string>
     <string name="mcp_title">Modo MCP</string>
     <string name="mcp_online">Conectado a internet</string>
     <string name="mcp_connecting">Conectando…</string>
