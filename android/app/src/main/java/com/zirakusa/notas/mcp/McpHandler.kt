@@ -50,7 +50,7 @@ class McpHandler(private val tokens: () -> List<Token>, private val data: NotesD
                     if (token.access == Access.READ) "This token is read-only." else "notes_create, notes_update, notes_move, notes_pin, " +
                         "notes_delete (to the trash, 30 days), folders_create, tasks_create, tasks_complete and tasks_delete change them.")
                 .put("_meta", JSONObject().put(TOKEN_META, JSONObject().put("name", token.name).put("kind", "redirect").put("mode", token.access.key)))
-            "ping" -> JSONObject()
+            "ping" -> McpProbeReceipt.accept(id)
             "tools/list" -> JSONObject().put("tools", JSONArray(NotesTools.available(token.access).map {
                 JSONObject().put("name", it.name).put("description", it.description).put("inputSchema", it.schema)
                     .put("annotations", JSONObject().put("readOnlyHint", !it.write).put("destructiveHint", false))

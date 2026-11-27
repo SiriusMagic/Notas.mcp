@@ -113,7 +113,7 @@
     <string name="privacy_text">Tus notas, tareas, fotos y dibujos se guardan solo en este teléfono y no van a copias en la nube. Notas no tiene anuncios ni estadísticas. El reconocimiento de texto se hace en el teléfono. Solo si activas el Modo MCP, la IA que conectes con un token puede leer (y, si le das permiso, cambiar) tus notas y tareas a través del relay; las notas bloqueadas nunca salen.</string>
     <string name="about">Acerca de</string>
     <string name="version">Versión %1$s</string>
-    <string name="mcp_settings_hint">Lo controla Arka: activarlo, permitirlo en local y crear tokens.</string>
+    <string name="mcp_settings_hint">Configura el acceso local y la redirección a Hub.</string>
     <string name="mcp_status_off">Apagado</string>
     <string name="widget_note">Nota</string>
     <string name="widget_notes">Notas</string>
@@ -149,5 +149,5 @@
     <string name="icon_sticky">Adhesivas</string>
     <string name="icon_notepad">Libreta</string>
     <string name="icon_hint">Cambia el icono de la pantalla de inicio. Algunos lanzadores tardan unos segundos en mostrarlo.</string>
-    <string name="mcp_no_arka">Instala Arka para activar el Modo MCP.</string>
+    <string name="mcp_no_arka">Instala Arka para administrar los enlaces del Hub.</string>
 </resources>

@@ -10,6 +10,7 @@ import com.zirakusa.notas.ui.theme.NotesColors
 import com.zirakusa.notas.ui.theme.Skins
 import androidx.core.net.toUri
 import com.zirakusa.notas.mcp.McpMode
+import com.zirakusa.notas.mcp.showMcpOptions
 import com.zirakusa.notas.ui.AppActions
 import com.zirakusa.notas.ui.Page
 import com.zirakusa.notas.ui.screens.WidgetKind
@@ -110,11 +111,7 @@ class MainActivity : FragmentActivity() {
         try { startActivity(Intent(Intent.ACTION_VIEW, FEEDBACK_URL.toUri())) } catch (_: ActivityNotFoundException) { }
     }
 
-    /** «Modo MCP» in Ajustes: it is turned on, allowed on the phone and given tokens in Arka, so this opens Arka. */
-    private fun openArka() {
-        val open = packageManager.getLaunchIntentForPackage("com.zirakusa.gatewayhub")
-        if (open != null) startActivity(open) else Toast.makeText(this, R.string.mcp_no_arka, Toast.LENGTH_LONG).show()
-    }
+    private fun openArka() = showMcpOptions(this)
 
     companion object {
         const val EXTRA_NOTE = "note_id"

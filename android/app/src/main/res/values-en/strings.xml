@@ -113,7 +113,7 @@
     <string name="privacy_text">Your notes, tasks, photos and drawings are kept only on this phone and are not backed up to the cloud. Notes has no ads or analytics. Text recognition runs on the phone. Only if you turn on MCP mode can the AI you connect with a token read (and, if you allow it, change) your notes and tasks through the relay; locked notes never leave.</string>
     <string name="about">About</string>
     <string name="version">Version %1$s</string>
-    <string name="mcp_settings_hint">Controlled from Arka: turning it on, allowing it locally and creating tokens.</string>
+    <string name="mcp_settings_hint">Set up local access and redirection to Hub.</string>
     <string name="mcp_status_off">Off</string>
     <string name="widget_note">Note</string>
     <string name="widget_notes">Notes</string>
@@ -149,5 +149,5 @@
     <string name="icon_sticky">Sticky</string>
     <string name="icon_notepad">Notepad</string>
     <string name="icon_hint">Changes the home-screen icon. Some launchers take a few seconds to show it.</string>
-    <string name="mcp_no_arka">Install Arka to turn MCP mode on.</string>
+    <string name="mcp_no_arka">Install Arka to manage Hub connections.</string>
 </resources>
